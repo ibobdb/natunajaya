@@ -194,6 +194,7 @@ class OrderController extends Controller
                 'teacher_id' => 'required|exists:teachers,id',
                 'availability_checked' => 'required|in:1', // Ensure availability was checked
             ]);
+            // dd($validated);
 
             // Begin transaction
             \DB::beginTransaction();
@@ -224,6 +225,8 @@ class OrderController extends Controller
             $order->user_id = auth()->id();
             $order->invoice_id = $invoice_id; // Add the invoice_id to the order
             $order->amount = $amount;
+            $order->schedule_id = $schedule->id; // Add the schedule_id to the order
+            $order->car_id = $validated['car_id'];
             $order->final_amount = $final_amount;
             $order->start_date = $date;
             $order->teacher_id = $validated['teacher_id'];

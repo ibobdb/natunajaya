@@ -6,74 +6,106 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            Create Order
-            <form action="{{ route('orders.store') }}" method="POST" class="p-6">
-                @csrf
-                <div class="mb-4">
-                    <label for="customer_id" class="block text-gray-700 text-sm font-bold mb-2">Customer</label>
-                    <input type="text" id="customer_id" name="customer_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" disabled value="{{ Auth::user()->name }}">
-                </div>
-                <div class="mb-4">
-                    <label for="order_date" class="block text-gray-700 text-sm font-bold mb-2">Order Date</label>
-                    <input type="datetime-local" id="order_date" name="order_date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required value="{{ date('Y-m-d\TH:i') }}">
-                </div>
-                <div class="mb-4">
-                    <label for="product_id" class="block text-gray-700 text-sm font-bold mb-2">Course:</label>
-                    <select id="product_id" name="class_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                      <option value="">Select a course</option>
-                      @foreach($courses as $course)
-                        <option value="{{ $course->id }}">{{ $course->name }}</option>
-                      @endforeach
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label for="teacher_id" class="block text-gray-700 text-sm font-bold mb-2">Instructor:</label>
-                    <select id="teacher_id" name="teacher_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required disabled>
-                      <option value="">Select a course first</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <div class="mb-4">
-                        <label for="transmission_type" class="block text-gray-700 text-sm font-bold mb-2">Transmission Type:</label>
-                        <select id="transmission_type" name="transmission_type" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                          <option value="">Select transmission type</option>
-                          <option value="manual">Manual</option>
-                          <option value="matic">Matic</option>
-                        </select>
-                      </div>
-                    <label for="car_id" class="block text-gray-700 text-sm font-bold mb-2">Mobil:</label>
-                    <select id="car_id" name="car_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                      <option value="">Select a car</option>
-                      @foreach($cars as $car)
-                        <option value="{{ $car->id }}">{{ $car->name }}</option>
-                      @endforeach
-                    </select>
-                </div>
-                
-                <!-- Hidden field to track if availability has been checked -->
-                <input type="hidden" id="availability_checked" name="availability_checked" value="0">
-                
-                <div id="availability_result" class="mb-4 p-3 hidden rounded-lg border">
-                  <!-- Availability result will be displayed here -->
-                </div>
-                
-                <div class="flex justify-between items-center mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <span class="font-medium text-gray-700">Check availability of instructor and vehicle</span>
-                  <button id="check_availability_btn" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded transition duration-150 ease-in-out flex items-center" type="button">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                  Check Availability
-                  </button>
-                </div>
-                
-                <button id="submit_order_btn" type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed" disabled>
-                    Create Order
-                </button>
-            </form>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-6 pb-2 border-b">Create New Order</h3>
+                    
+                    <form action="{{ route('orders.store') }}" method="POST" class="space-y-6">
+                        @csrf
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Customer Information -->
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-3">Customer Information</h4>
+                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                    <div class="mb-4">
+                                        <label for="customer_id" class="block text-gray-700 text-sm font-medium mb-2">Customer</label>
+                                        <input type="text" id="customer_id" name="customer_id" class="shadow-sm bg-gray-100 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" disabled value="{{ Auth::user()->name }}">
+                                    </div>
+                                    <div>
+                                        <label for="order_date" class="block text-gray-700 text-sm font-medium mb-2">Order Date</label>
+                                        <input type="datetime-local" id="order_date" name="order_date" class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required value="{{ date('Y-m-d\TH:i') }}">
+                                    </div>
+                                </div>
+                            </div>
 
+                            <!-- Course Information -->
+                            <div>
+                                <h4 class="font-medium text-gray-700 mb-3">Course Details</h4>
+                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                    <div class="mb-4">
+                                        <label for="product_id" class="block text-gray-700 text-sm font-medium mb-2">Course:</label>
+                                        <select id="product_id" name="class_id" class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                          <option value="">Select a course</option>
+                                          @foreach($courses as $course)
+                                            <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                          @endforeach
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="teacher_id" class="block text-gray-700 text-sm font-medium mb-2">Instructor:</label>
+                                        <select id="teacher_id" name="teacher_id" class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required disabled>
+                                          <option value="">Select a course first</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Vehicle Information -->
+                            <div class="md:col-span-2">
+                                <h4 class="font-medium text-gray-700 mb-3">Vehicle Selection</h4>
+                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="transmission_type" class="block text-gray-700 text-sm font-medium mb-2">Transmission Type:</label>
+                                            <select id="transmission_type" name="transmission_type" class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                              <option value="">Select transmission type</option>
+                                              <option value="manual">Manual</option>
+                                              <option value="matic">Matic</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="car_id" class="block text-gray-700 text-sm font-medium mb-2">Vehicle:</label>
+                                            <select id="car_id" name="car_id" class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                              <option value="">Select a car</option>
+                                              @foreach($cars as $car)
+                                                <option value="{{ $car->id }}">{{ $car->name }}</option>
+                                              @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden field to track if availability has been checked -->
+                        <input type="hidden" id="availability_checked" name="availability_checked" value="0">
+                        
+                        <div id="availability_result" class="mb-4 p-4 hidden rounded-lg border"></div>
+                        
+                        <div class="flex flex-col md:flex-row md:justify-between md:items-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <div class="flex items-center mb-3 md:mb-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="font-medium text-gray-700">Check availability before creating your order</span>
+                            </div>
+                            <button id="check_availability_btn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out flex items-center justify-center shadow-sm" type="button">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                Check Availability
+                            </button>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-end">
+                            <button id="submit_order_btn" type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-md opacity-50 cursor-not-allowed shadow-sm transition duration-150 ease-in-out" disabled>
+                                Create Order
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
