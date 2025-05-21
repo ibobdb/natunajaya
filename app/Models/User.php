@@ -18,8 +18,8 @@ class User extends Authenticatable implements FilamentUser
         if ($panel->getId() === 'admin') {
             return str_ends_with($this->role, 'admin');
         }
-        if ($panel->getId() === 'users') {
-            return str_ends_with($this->role, 'user');
+        if ($panel->getId() === 'student') {
+            return str_ends_with($this->role, 'student');
         }
         return false;
     }
