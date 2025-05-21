@@ -2,12 +2,26 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::get('/dashboard', function () {
+    $user = Auth::user();
+    $role = $user->role;
+
+    // Redirect based on user role
+    if ($role === 'student') {
+        return redirect('/student');
+    } elseif ($role === 'admin') {
+        return redirect('/admin');
+    } elseif ($role === 'instructor') {
+        return redirect('/instructor');
+    }
+
+    // Default fallback - show dashboard view
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
