@@ -41,7 +41,7 @@
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-500 dark:text-gray-400">Status:</span>
                                 <x-filament::badge
-                                    :color="$this->order->status == 'paid' ? 'success' : ($this->order->status == 'pending' ? 'warning' : 'danger')"
+                                    :color="$this->order->status == 'success' ? 'success' : ($this->order->status == 'pending' ? 'warning' : 'danger')"
                                 >
                                     {{ ucfirst($this->order->status) }}
                                 </x-filament::badge>
@@ -66,15 +66,18 @@
                     </div>
                 </x-filament::card>
                 
-                @if($this->order->status !== 'paid')
-                <div class="mt-4 flex justify-end">
-                    <x-filament::button
-                        type="button"
-                        color="primary"
-                        wire:click="processPayment"
-                    >
-                        Proceed to Payment
-                    </x-filament::button>
+                @if($this->order->status !== 'success' && $this->order->status !== 'paid')
+                <div class="mt-4 flex justify-end">                
+                  <x-filament::button
+                    type="button"
+                    color="primary"
+                    wire:loading.attr="disabled"
+                    wire:target="processPayment"
+                    wire:loading.class="opacity-50 cursor-not-allowed"
+                    wire:click="{{ $this->snapToken ? 'initiateMidtransPayment' : 'processPayment' }}"
+                  >
+                    {{ $this->snapToken ? 'Pay Now' : 'Prepare Payment' }}
+                  </x-filament::button>
                 </div>
                 @endif
             </div>
@@ -91,3 +94,38 @@
         @endif
     </x-filament::section>
 </x-filament-panels::page>
+
+<!-- Midtrans Snap JS -->
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+<script>
+    // Listen for the custom event from Livewire
+    document.addEventListener('livewire:initialized', function() {
+        Livewire.on('openMidtransPopup', event => {
+            // Open Midtrans Snap popup with configuration options
+            window.snap.pay(event.snapToken, {
+                // Override the default behavior to keep the background visible
+                skipOrderSummary: true,
+                showOrderId: true,
+                gopayMode: "deeplink",
+                uiMode: "modern",
+                onSuccess: function(result){
+                    // Success handler - you can refresh page or notify Livewire to update
+                    Livewire.dispatch('paymentSuccess', { result: result });
+                },
+                onPending: function(result){
+                    // Pending handler
+                    Livewire.dispatch('paymentPending', { result: result });
+                },
+                onError: function(result){
+                    // Error handler
+                    Livewire.dispatch('paymentError', { result: result });
+                },
+                onClose: function(){
+                    // Handle when customer closes the popup without completing payment
+                    Livewire.dispatch('paymentCancelled');
+                }
+            });
+        });
+    });
+</script>
+

@@ -1,8 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MidtransCallbackController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -39,5 +41,12 @@ Route::middleware(['auth'])->group(function () {
     // Route::get('/student/payment/{invoiceNumber}', App\Filament\Student\Pages\Payment::class)
     //     ->name('payment.show');
 });
+
+// Midtrans Notification Route - No auth middleware needed
+Route::post('/payments/notification', [PaymentController::class, 'handleNotification'])
+    ->middleware('midtrans')
+    ->name('payments.notification');
+Route::post('/midtrans-callback', [MidtransCallbackController::class, 'handle'])
+    ->name('midtrans.callback');
 
 require __DIR__ . '/auth.php';

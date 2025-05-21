@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Helpers\MidtransHelper;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +12,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register Midtrans Helper
+        $this->app->singleton(MidtransHelper::class, function ($app) {
+            return new MidtransHelper();
+        });
     }
 
     /**

@@ -2,7 +2,10 @@
 
 namespace App\Filament\Student\Pages;
 
+use App\Helpers\MidtransHelper;
 use Filament\Pages\Page;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 
 class Payment extends Page
@@ -14,21 +17,136 @@ class Payment extends Page
 
     public string $invoiceNumber = ''; // Initialize with default empty string
     public $order = null;
+    public $snapToken = null;
+
     public function mount(): void
     {
         // Get invoice number from query parameter
         $this->invoiceNumber = Request::query('inv') ?? '';
-        $this->order = \App\Models\Order::where('invoice_id', $this->invoiceNumber)
-            ->with(['course', 'student'])
-            ->first();
+        $this->order = \App\Models\Order::where('invoice_id', $this->invoiceNumber)->first();
     }
-    // protected function getViewData(): array
-    // {
-    //     $order = \App\Models\Order::where('invoice_id', $this->invoiceNumber)->first();
 
-    //     return [
-    //         'order' => $order,
-    //         // Add any other data needed by your view
-    //     ];
-    // }
+    public function processPayment()
+    {
+        try {
+            if (!$this->order) {
+                Notification::make()
+                    ->title('No order found')
+                    ->danger()
+                    ->send();
+                return;
+            }
+
+            // Check if order belongs to current student
+            if ($this->order->student_id != auth()->user()->student->id) {
+                Notification::make()
+                    ->title('You do not have permission to process this payment')
+                    ->danger()
+                    ->send();
+                return;
+            }
+
+            // Check if order is already paid
+            if ($this->order->status === 'paid') {
+                Notification::make()
+                    ->title('This order has already been paid')
+                    ->warning()
+                    ->send();
+                return;
+            }
+
+            $midtransHelper = new MidtransHelper();
+
+            // Prepare Midtrans payment parameters
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $this->order->invoice_id,
+                    'gross_amount' => (float) $this->order->amount,
+                ],
+                'customer_details' => [
+                    'first_name' => auth()->user()->name,
+                    'email' => auth()->user()->email,
+                ],
+                'item_details' => [
+                    [
+                        'id' => $this->order->course_id,
+                        'price' => (float) $this->order->final_amount,
+                        'quantity' => 1,
+                        'name' => $this->order->course->name,
+                    ]
+                ],
+            ];
+
+            // Get Snap payment page URL
+            $this->snapToken = $midtransHelper->createTransaction($params);
+
+            // Show success notification
+            Notification::make()
+                ->title('Payment ready')
+                ->body('Click "Pay Now" to proceed with payment')
+                ->success()
+                ->send();
+        } catch (\Exception $e) {
+            Log::error('Payment Processing Error: ' . $e->getMessage());
+
+            Notification::make()
+                ->title('Failed to process payment')
+                ->body('Please try again later. Error: ' . $e->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
+
+    // Add this new method
+    public function initiateMidtransPayment()
+    {
+        $this->dispatch('openMidtransPopup', snapToken: $this->snapToken);
+    }
+
+    // Add the payment status handling methods
+    public function paymentSuccess($result)
+    {
+        // The Midtrans callback will update the database
+        // This is just for UI feedback
+
+        // Reload the order to get the latest status
+        $this->order->refresh();
+
+        // Show success message
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'Payment completed successfully!'
+        ]);
+
+        // Redirect to receipt or dashboard after short delay
+        $this->redirectRoute('student.dashboard', navigate: true);
+    }
+
+    // Handle other payment statuses as needed
+    public function paymentPending($result)
+    {
+        $this->dispatch('notify', [
+            'type' => 'warning',
+            'message' => 'Your payment is being processed. We will update you once completed.'
+        ]);
+
+        // Reload the order
+        $this->order->refresh();
+    }
+
+    public function paymentError($result)
+    {
+        $this->dispatch('notify', [
+            'type' => 'error',
+            'message' => 'Payment failed. Please try again or contact support.'
+        ]);
+    }
+
+    public function paymentCancelled()
+    {
+        $this->dispatch('notify', [
+            'type' => 'info',
+            'message' => 'Payment cancelled.'
+        ]);
+    }
 }
