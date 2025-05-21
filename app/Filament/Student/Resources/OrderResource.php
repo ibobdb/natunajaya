@@ -2,17 +2,18 @@
 
 namespace App\Filament\Student\Resources;
 
-use App\Filament\Student\Resources\OrderResource\Pages;
-use App\Filament\Student\Resources\OrderResource\RelationManagers;
+use Filament\Forms;
+use Filament\Tables;
 use App\Models\Order;
 use App\Models\Student;
-use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Student\Resources\OrderResource\Pages;
+use App\Filament\Student\Resources\OrderResource\RelationManagers;
 
 class OrderResource extends Resource
 {
@@ -92,6 +93,7 @@ class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('updated_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('invoice_id')
                     ->searchable(),
@@ -104,7 +106,14 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('final_amount')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'success' => 'success',
+                        'pending' => 'warning',
+                        'expired' => 'danger',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -118,7 +127,18 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn(Order $record) => $record->status !== 'success'),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn(Order $record) => $record->status !== 'success')
+                    ->action(function (Order $record) {
+                        $record->delete();
+                        Notification::make()
+                            ->title('Order deleted successfully')
+                            ->success()
+                            ->send();
+                    })
+                    ->requiresConfirmation(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
