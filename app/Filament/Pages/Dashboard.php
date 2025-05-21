@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Filament\Pages;
+
+use Filament\Pages\Dashboard as BaseDashboard;
+
+class Dashboard extends BaseDashboard
+{
+  protected static ?string $title = 'Admin Dashboard';
+
+  protected static ?string $navigationIcon = 'heroicon-o-home';
+
+  protected function getHeaderWidgets(): array
+  {
+    return [
+      \App\Filament\Widgets\StatsOverview::class,
+    ];
+  }
+
+  protected function getFooterWidgets(): array
+  {
+    return [
+      \App\Filament\Widgets\LatestOrders::class,
+      // \App\Filament\Widgets\RevenueChart::class,
+    ];
+  }
+}

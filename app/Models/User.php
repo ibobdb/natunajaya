@@ -21,6 +21,9 @@ class User extends Authenticatable implements FilamentUser
         if ($panel->getId() === 'student') {
             return str_ends_with($this->role, 'student');
         }
+        if ($panel->getId() === 'instructor') {
+            return str_ends_with($this->role, 'instructor');
+        }
         return false;
     }
     /** @use HasFactory<\Database\Factories\UserFactory> */
