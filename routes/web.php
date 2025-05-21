@@ -31,11 +31,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::middleware(['auth'])->group(function () {
-    Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
-    Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store'])->name('orders.store');
-    Route::post('/orders/check-availability', [\App\Http\Controllers\OrderController::class, 'checkAvailability'])->name('orders.check-availability');
-    Route::get('/teachers', [\App\Http\Controllers\OrderController::class, 'getTeachers'])->name('teachers.filter');
-    Route::get('/cars/filter', [App\Http\Controllers\OrderController::class, 'getCars'])->name('cars.filter');
+    // Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
+    // Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store'])->name('orders.store');
+    // Route::post('/orders/check-availability', [\App\Http\Controllers\OrderController::class, 'checkAvailability'])->name('orders.check-availability');
+    // Route::get('/teachers', [\App\Http\Controllers\OrderController::class, 'getTeachers'])->name('teachers.filter');
+    // Route::get('/cars/filter', [App\Http\Controllers\OrderController::class, 'getCars'])->name('cars.filter');
+    // Route::get('/student/payment/{invoiceNumber}', App\Filament\Student\Pages\Payment::class)
+    //     ->name('payment.show');
 });
 
 require __DIR__ . '/auth.php';

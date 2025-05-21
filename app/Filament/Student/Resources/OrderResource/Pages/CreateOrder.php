@@ -17,7 +17,12 @@ class CreateOrder extends CreateRecord
         // Get the created order
         $order = $this->record;
 
-        // Redirect to payment page with the order ID
-        $this->redirect(route('student.payment.show', ['order' => $order->id]), navigate: true);
+        // Redirect to the correct URL format: /student/payment?inv=invoice_id
+        $this->redirect("/student/payment?inv={$order->invoice_id}", navigate: true);
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return "/student/payment?inv={$this->record->invoice_id}";
     }
 }
