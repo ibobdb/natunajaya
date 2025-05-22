@@ -18,6 +18,10 @@ class Schedule extends Model
     'for_session',
     'start_date',
     'duration_session',
+    'status',
+    'description',
+    'instructor_approval',
+    'admin_approval',
   ];
 
   /**

@@ -15,7 +15,6 @@ class MidtransCallbackController extends Controller
 
         try {
             $notification = json_decode($request->getContent(), true);
-
             if (json_last_error() !== JSON_ERROR_NONE) {
                 Log::error('Invalid JSON received', [
                     'error' => json_last_error_msg(),
@@ -138,7 +137,8 @@ class MidtransCallbackController extends Controller
                         $schedules[] = [
                             'student_course_id' => $studentCourseId,
                             'for_session' => $i,
-                            'start_date' => now(),
+                            'start_date' => null,
+                            'status' => 'date_not_set',
                             'duration_session' => 'week',
                             'created_at' => now(),
                             'updated_at' => now(),

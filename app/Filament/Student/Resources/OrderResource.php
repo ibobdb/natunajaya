@@ -154,6 +154,13 @@ class OrderResource extends Resource
             //
         ];
     }
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereHas('student', function ($query) {
+                $query->where('user_id', auth()->user()->id);
+            });
+    }
 
     public static function getPages(): array
     {
