@@ -15,4 +15,8 @@ class Car extends Model
     'name',
     'type',
   ];
+  public function car()
+  {
+    return $this->belongsTo(\App\Models\Car::class);
+  }
 }

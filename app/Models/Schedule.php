@@ -22,6 +22,7 @@ class Schedule extends Model
     'description',
     'instructor_approval',
     'admin_approval',
+    'car_id'
   ];
 
   /**
@@ -48,5 +49,13 @@ class Schedule extends Model
   public function attendances(): HasMany
   {
     return $this->hasMany(Attendance::class);
+  }
+
+  /**
+   * Get the car associated with this schedule.
+   */
+  public function car(): BelongsTo
+  {
+    return $this->belongsTo(Car::class);
   }
 }
