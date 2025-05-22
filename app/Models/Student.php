@@ -19,7 +19,7 @@ class Student extends Model
   protected $fillable = [
     'user_id',
     'name',
-    'email',
+    // 'email',
     // Add any other necessary fields
   ];
 

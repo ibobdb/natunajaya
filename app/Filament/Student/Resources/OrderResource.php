@@ -94,6 +94,7 @@ class OrderResource extends Resource
     {
         return $table
             ->defaultSort('updated_at', 'desc')
+            ->recordUrl(fn(Order $record): string => route('filament.student.pages.payment', ['inv' => $record->invoice_id]))
             ->columns([
                 Tables\Columns\TextColumn::make('invoice_id')
                     ->searchable(),

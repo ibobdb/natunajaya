@@ -43,9 +43,9 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Midtrans Notification Route - No auth middleware needed
-Route::post('/payments/notification', [PaymentController::class, 'handleNotification'])
-    ->middleware('midtrans')
-    ->name('payments.notification');
+// Route::post('/payments/notification', [PaymentController::class, 'handleNotification'])
+//     ->middleware('midtrans')
+//     ->name('payments.notification');
 Route::post('/midtrans-callback', [MidtransCallbackController::class, 'handle'])
     ->name('midtrans.callback');
 
