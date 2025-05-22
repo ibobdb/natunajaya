@@ -25,23 +25,33 @@ class ScheduleResource extends Resource
             ->schema([
                 Forms\Components\Select::make('student_course_id')
                     ->relationship('studentCourse', 'id')
+                    ->getOptionLabelFromRecordUsing(fn($record) => $record->student->name)
+                    ->label('Student Name')
+                    ->disabled()
                     ->required(),
                 Forms\Components\TextInput::make('for_session')
+                    ->disabled()
                     ->required()
                     ->numeric(),
                 Forms\Components\DateTimePicker::make('start_date')
+                    ->label('Set Schedule')
                     ->required(),
-                Forms\Components\TextInput::make('duration_session')
-                    ->required(),
+
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('start_date', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('studentCourse.id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('studentCourse.student.name')
+                    ->label('Student Name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('studentCourse.course.name')
+                    ->label('Course Name')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('for_session')
                     ->numeric()
@@ -49,7 +59,7 @@ class ScheduleResource extends Resource
                 Tables\Columns\TextColumn::make('start_date')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('duration_session'),
+                // Tables\Columns\TextColumn::make('duration_session'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -64,7 +74,7 @@ class ScheduleResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                // Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
