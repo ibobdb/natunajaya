@@ -46,7 +46,10 @@ Route::middleware(['auth'])->group(function () {
 // Route::post('/payments/notification', [PaymentController::class, 'handleNotification'])
 //     ->middleware('midtrans')
 //     ->name('payments.notification');
-Route::post('/midtrans-callback', [MidtransCallbackController::class, 'handle'])
-    ->name('midtrans.callback');
+// Route::post('/midtrans-callback', [MidtransCallbackController::class, 'handle'])
+//     ->name('midtrans.callback');
+Route::get('/ping', function () {
+    return 'pong';
+});
 
 require __DIR__ . '/auth.php';

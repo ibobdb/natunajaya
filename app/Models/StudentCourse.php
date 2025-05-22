@@ -15,6 +15,7 @@ class StudentCourse extends Model
    */
   protected $fillable = [
     'course_id',
+    'invoice_id',
     'student_id',
     'status',
     'active_on',
