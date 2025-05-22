@@ -18,13 +18,25 @@ class ScheduleResource extends Resource
     protected static ?string $model = Schedule::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-    // OR
-    // protected static ?string $navigationIcon = 'heroicon-o-clock';
-    // OR 
-    // protected static ?string $navigationIcon = 'heroicon-s-calendar';
-    // OR
-    // protected static ?string $navigationIcon = 'heroicon-s-calendar-days';
+    protected static ?string $navigationLabel = 'My Schedules';
 
+    protected static ?string $modelLabel = 'Driving Schedule';
+
+    protected static ?string $pluralModelLabel = 'Driving Schedules';
+
+    protected static ?int $navigationSort = 10;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getEloquentQuery()
+            ->where('status', 'ready')
+            ->count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return static::getNavigationBadge() > 0 ? 'warning' : null;
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -39,6 +51,7 @@ class ScheduleResource extends Resource
             ->defaultSort(function (Builder $query) {
                 $query->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END, start_date ASC');
             })
+
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Schedule ID')
