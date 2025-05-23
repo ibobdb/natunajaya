@@ -2,43 +2,53 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model
 {
-    use HasFactory;
-
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array
      */
     protected $fillable = [
         'name',
+        'description',
+        'session',
+        'duration_session',
+        'duration',
         'price',
-        'type',
-        'levels',
-        'available_teachers',
+        'expired',
     ];
 
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array
      */
     protected $casts = [
-        'price' => 'float',
-        'levels' => 'string', // Changed from 'array' to 'string' to match MySQL ENUM
-        'available_teachers' => 'integer',
+        'expired' => 'date',
+        'session' => 'integer',
+        'duration' => 'integer',
+        'price' => 'integer',
     ];
 
     /**
-     * Get the teachers for the course.
+     * Get the student courses associated with this course.
      */
-    public function teachers(): BelongsToMany
+    public function studentCourses(): HasMany
     {
-        return $this->belongsToMany(Teacher::class);
+        return $this->hasMany(StudentCourse::class);
+    }
+
+    /**
+     * Get the students enrolled in this course.
+     */
+    public function students()
+    {
+        return $this->belongsToMany(Student::class, 'student_courses')
+            ->withPivot(['status', 'active_on', 'score'])
+            ->withTimestamps();
     }
 }

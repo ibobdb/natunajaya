@@ -26,40 +26,28 @@ class CourseResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Textarea::make('description')
+                    ->required()
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('session')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\Select::make('duration_session')
+                    ->required()
+                    ->options([
+                        'week' => 'Week',
+                        'month' => 'Month',
+                        'year' => 'Year',
+                    ])
+                    ->default('week'),
+                Forms\Components\TextInput::make('duration')
+                    ->required()
+                    ->numeric(),
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->numeric()
                     ->prefix('$'),
-                Forms\Components\TextInput::make('type')
-                    ->default('Online')
-                    ->maxLength(255),
-                Forms\Components\Select::make('levels')
-                    ->required()
-                    ->options([
-                        'beginner' => 'Beginner Level',
-                        'intermediate' => 'Intermediate Level',
-                        'advanced' => 'Advanced Level',
-                    ])
-                    ->native(false),
-                Forms\Components\TextInput::make('available_teachers')
-                    ->required()
-                    ->disabled()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\Select::make('teachers')
-                    ->relationship('teachers', 'name')
-                    ->multiple()
-                    ->preload()
-                    ->searchable()
-                    ->label('Available Teachers')
-                    ->placeholder('Select teachers')
-                    ->helperText('Select teachers available for this course')
-                    ->reactive()
-                    ->afterStateUpdated(function (callable $set, $state) {
-                        // Update the available teachers count based on selected teachers
-                        $set('available_teachers', count($state));
-                    }),
-
+                Forms\Components\DatePicker::make('expired'),
             ]);
     }
 
@@ -69,21 +57,20 @@ class CourseResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->money()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('type')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('levels'),
-                Tables\Columns\TextColumn::make('available_teachers')
+                Tables\Columns\TextColumn::make('session')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('teachers')
-                    ->getStateUsing(function (Course $record) {
-                        return $record->teachers->pluck('name')->implode(', ');
-                    })
-                    ->searchable()
-                    ->label('Available Teachers'),
+                Tables\Columns\TextColumn::make('duration_session'),
+                Tables\Columns\TextColumn::make('duration')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('price')
+                    // ->money()
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('expired')
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

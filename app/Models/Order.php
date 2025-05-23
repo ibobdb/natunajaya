@@ -5,68 +5,80 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Order extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-        'user_id',
-        'status',
-        'amount',
-        'final_amount',
-        'start_date',
-        'duration',
-        'end_date',
-        'course_id',
-        'invoice_id',
-        'car_id',
-        'schedule_id',
-        'teacher_id',
-    ];
+  /**
+   * The attributes that are mass assignable.
+   *
+   * @var array
+   */
+  protected $fillable = [
+    'invoice_id',
+    'student_id',
+    'course_id',  // Added missing course_id
+    'amount',
+    'final_amount',
+    'status',
+  ];
 
-    /**
-     * Get the user that owns the order.
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
+  /**
+   * The attributes that should be cast.
+   *
+   * @var array
+   */
+  protected $casts = [
+    'amount' => 'integer',
+    'final_amount' => 'integer',
+  ];
 
-    /**
-     * Get the teacher associated with the order.
-     */
-    public function teacher(): BelongsTo
-    {
-        return $this->belongsTo(Teacher::class);
-    }
+  // Modified boot method to include default values for amount and final_amount
+  protected static function boot()
+  {
+    parent::boot();
 
-    /**
-     * Get the car associated with the order.
-     */
-    public function car(): BelongsTo
-    {
-        return $this->belongsTo(Car::class);
-    }
+    static::creating(function ($order) {
+      if (empty($order->invoice_id)) {
+        $order->invoice_id = 'INV-' . time() . '-' . rand(1000, 9999);
+      }
 
-    /**
-     * Get the course associated with the order.
-     */
-    public function course(): BelongsTo
-    {
-        return $this->belongsTo(Course::class);
-    }
+      if (empty($order->status)) {
+        $order->status = 'pending';
+      }
 
-    /**
-     * Get the schedule associated with the order.
-     */
-    public function schedule(): BelongsTo
-    {
-        return $this->belongsTo(Schedule::class);
-    }
+      // Set default amount and final_amount if not provided
+      if (empty($order->amount) && !empty($order->course_id)) {
+        $course = Course::find($order->course_id);
+        if ($course) {
+          $order->amount = $course->price ?? 0;
+          $order->final_amount = $course->price ?? 0;
+        } else {
+          // Set default values if course not found
+          $order->amount = 0;
+          $order->final_amount = 0;
+        }
+      }
+
+      // Ensure final_amount is set if only amount is provided
+      if (empty($order->final_amount) && !empty($order->amount)) {
+        $order->final_amount = $order->amount;
+      }
+    });
+  }
+
+  /**
+   * Get the student that owns the order.
+   */
+  public function student(): BelongsTo
+  {
+    return $this->belongsTo(Student::class);
+  }
+
+  public function course(): BelongsTo
+  {
+    return $this->belongsTo(Course::class);
+  }
 }

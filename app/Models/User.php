@@ -15,7 +15,16 @@ class User extends Authenticatable implements FilamentUser
 {
     public function canAccessPanel(Panel $panel): bool
     {
-        return str_ends_with($this->role, 'admin');
+        if ($panel->getId() === 'admin') {
+            return str_ends_with($this->role, 'admin');
+        }
+        if ($panel->getId() === 'student') {
+            return str_ends_with($this->role, 'student');
+        }
+        if ($panel->getId() === 'instructor') {
+            return str_ends_with($this->role, 'instructor');
+        }
+        return false;
     }
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -63,5 +72,13 @@ class User extends Authenticatable implements FilamentUser
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * Get the student profile associated with the user.
+     */
+    public function student()
+    {
+        return $this->hasOne(Student::class);
     }
 }

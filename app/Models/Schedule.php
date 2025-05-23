@@ -2,58 +2,60 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Schedule extends Model
 {
-    use HasFactory;
+  /**
+   * The attributes that are mass assignable.
+   *
+   * @var array
+   */
+  protected $fillable = [
+    'student_course_id',
+    'for_session',
+    'start_date',
+    'duration_session',
+    'status',
+    'description',
+    'instructor_approval',
+    'admin_approval',
+    'car_id'
+  ];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-        'date',
-        'time',
-        'class_id',
-        'car_id',
-        'teacher_id',
-    ];
+  /**
+   * The attributes that should be cast.
+   *
+   * @var array
+   */
+  protected $casts = [
+    'start_date' => 'datetime',
+    'for_session' => 'integer',
+  ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'date' => 'date',
-        'time' => 'datetime:H:i',
-    ];
+  /**
+   * Get the student course associated with this schedule.
+   */
+  public function studentCourse(): BelongsTo
+  {
+    return $this->belongsTo(StudentCourse::class);
+  }
 
-    /**
-     * Get the car that owns the schedule.
-     */
-    public function car(): BelongsTo
-    {
-        return $this->belongsTo(Car::class);
-    }
+  /**
+   * Get the attendance records for this schedule.
+   */
+  public function attendances(): HasMany
+  {
+    return $this->hasMany(Attendance::class);
+  }
 
-    /**
-     * Get the course/class associated with the schedule.
-     */
-    public function course(): BelongsTo
-    {
-        return $this->belongsTo(Course::class, 'class_id');
-    }
-
-    /**
-     * Get the teacher associated with the schedule.
-     */
-    public function teacher(): BelongsTo
-    {
-        return $this->belongsTo(Teacher::class);
-    }
+  /**
+   * Get the car associated with this schedule.
+   */
+  public function car(): BelongsTo
+  {
+    return $this->belongsTo(Car::class);
+  }
 }

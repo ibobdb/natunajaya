@@ -12,8 +12,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 
 class CarResource extends Resource
 {
@@ -25,25 +23,15 @@ class CarResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
+                Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(255)
-                    ->label('Car Name')
-                    ->placeholder('Enter car name'),
-
+                    ->maxLength(255),
                 Forms\Components\Select::make('type')
                     ->required()
                     ->options([
                         'matic' => 'Matic',
                         'manual' => 'Manual',
-                    ])
-                    ->label('Car Type')
-                    ->placeholder('Select car type'),
-
-                Toggle::make('availability')
-                    ->label('Available for Booking')
-                    ->helperText('Toggle whether this car is available for booking')
-                    ->default(true),
+                    ]),
             ]);
     }
 
@@ -52,17 +40,9 @@ class CarResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
-
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('type')
-                    ->searchable()
-                    ->sortable(),
-
-                Tables\Columns\IconColumn::make('availability')
-                    ->boolean()
-                    ->sortable(),
-
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

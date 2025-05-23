@@ -28,7 +28,31 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Get the authenticated user
+        $user = Auth::user();
+        $role = $user->role; // Get the role
+
+        // Log the role value for debugging
+        \Log::info('User role detected: ' . $role);
+        \Log::info('User data:', ['user' => $user->toArray()]);
+
+        // Make case-insensitive comparison and trim any whitespace
+        $role = strtolower(trim($role));
+
+        // Redirect based on user role with improved comparison
+        if ($role == 'student') {
+            return redirect()->intended('/student');
+        } elseif ($role == 'admin') {
+            return redirect()->intended('/admin');
+        } elseif ($role == 'instructor') {
+            return redirect()->intended('/instructor');
+        }
+
+        // Log if no matching role was found
+        \Log::warning('No matching role found for: ' . $role);
+
+        // Default fallback redirect
+        return redirect()->intended('/');
     }
 
     /**
