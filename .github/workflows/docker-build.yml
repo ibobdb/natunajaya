@@ -1,0 +1,79 @@
+name: Docker Build and Push to GitHub Packages
+
+on:
+  workflow_dispatch:
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Latest Tag
+        id: get-latest-tag
+        run: |
+          if git describe --tags --abbrev=0 > /dev/null 2>&1; then
+            echo "LATEST_TAG=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+          else
+            echo "LATEST_TAG=0.0.1" >> $GITHUB_ENV  # Default jika belum ada tag
+          fi
+
+      # Set PHP version for Laravel
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+
+      # Install composer dependencies
+      - name: Install Composer Dependencies
+        run: composer install --optimize-autoloader --no-dev
+
+      # Install Node.js dependencies and build assets
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install NPM Dependencies
+        run: npm ci
+
+      - name: Build Frontend Assets
+        run: npm run build
+
+      # Login to GitHub Container Registry
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+
+      # Build and push the Docker image
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/natuna-jaya:${{ env.LATEST_TAG }}
+          build-args: |
+            GIT_TAG=${{ env.LATEST_TAG }}
+            APP_ENV=${{ secrets.APP_ENV }}
+            APP_KEY=${{ secrets.APP_KEY }}
+            APP_DEBUG=${{ secrets.APP_DEBUG }}
+            APP_URL=${{ secrets.APP_URL }}
+            DB_CONNECTION=${{ secrets.DB_CONNECTION }}
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            DB_DATABASE=${{ secrets.DB_DATABASE }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            MAIL_MAILER=${{ secrets.MAIL_MAILER }}
+            MAIL_HOST=${{ secrets.MAIL_HOST }}
+            MAIL_PORT=${{ secrets.MAIL_PORT }}
+            MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
+            MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
+            MAIL_ENCRYPTION=${{ secrets.MAIL_ENCRYPTION }}
+            MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
