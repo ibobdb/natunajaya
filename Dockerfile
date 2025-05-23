@@ -29,15 +29,15 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Install required PHP extensions
+# Install additional PHP extensions
 RUN apt-get update && apt-get install -y \
-    php-intl \
-    php-zip \
-    php-xml \
-    php-mbstring \
-    php-curl \
-    php-mysql \
-    php-pgsql \
+    libicu-dev \
+    zlib1g-dev \
+    libzip-dev \
+    libxml2-dev \
+    libcurl4-openssl-dev \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl soap curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
