@@ -49,8 +49,11 @@ COPY docker/nginx/default.conf /etc/nginx/sites-available/default
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
-# Configure Supervisor
-COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Create required directories
+RUN mkdir -p /docker/supervisor
+
+# Copy supervisor configuration
+COPY docker/supervisor/supervisord.conf /docker/supervisor/supervisord.conf
 
 # Expose port 80
 EXPOSE 80
