@@ -1,5 +1,8 @@
 FROM php:8.2-fpm
 
+# Only keeping the GIT_TAG argument
+ARG GIT_TAG
+
 # Set working directory
 WORKDIR /var/www/html
 
@@ -13,8 +16,12 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libzip-dev \
-    nodejs \
-    npm
+    nginx \
+    supervisor
+
+# Install Node.js 18
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -35,10 +42,18 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 RUN composer install --optimize-autoloader --no-dev
 
 # Install Node.js dependencies and build assets
-RUN npm install && npm run build
+RUN npm ci && npm run build
 
-# Expose port 9000
-EXPOSE 9000
+# Configure Nginx
+COPY docker/nginx/default.conf /etc/nginx/sites-available/default
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log
 
-# Start PHP-FPM server
-CMD ["php-fpm"]
+# Configure Supervisor
+COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start Supervisor to manage Nginx and PHP-FPM
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

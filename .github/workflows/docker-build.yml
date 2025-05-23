@@ -51,29 +51,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
 
-      # Build and push the Docker image
+      # Build and push the Docker image (without environment variables)
       - name: Build and Push
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/natuna-jaya:${{ env.LATEST_TAG }}
+          # Only keeping GIT_TAG as a build argument
           build-args: |
             GIT_TAG=${{ env.LATEST_TAG }}
-            APP_ENV=${{ secrets.APP_ENV }}
-            APP_KEY=${{ secrets.APP_KEY }}
-            APP_DEBUG=${{ secrets.APP_DEBUG }}
-            APP_URL=${{ secrets.APP_URL }}
-            DB_CONNECTION=${{ secrets.DB_CONNECTION }}
-            DB_HOST=${{ secrets.DB_HOST }}
-            DB_PORT=${{ secrets.DB_PORT }}
-            DB_DATABASE=${{ secrets.DB_DATABASE }}
-            DB_USERNAME=${{ secrets.DB_USERNAME }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            MAIL_MAILER=${{ secrets.MAIL_MAILER }}
-            MAIL_HOST=${{ secrets.MAIL_HOST }}
-            MAIL_PORT=${{ secrets.MAIL_PORT }}
-            MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
-            MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
-            MAIL_ENCRYPTION=${{ secrets.MAIL_ENCRYPTION }}
-            MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}
