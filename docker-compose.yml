@@ -1,0 +1,34 @@
+version: "3"
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: natuna-jaya-app
+        container_name: natuna-jaya-app
+        restart: unless-stopped
+        working_dir: /var/www/html
+        volumes:
+            - ./:/var/www/html
+        networks:
+            - natuna-jaya
+
+    nginx:
+        image: nginx:alpine
+        container_name: natuna-jaya-nginx
+        restart: unless-stopped
+        ports:
+            - "80:80"
+        volumes:
+            - ./:/var/www/html
+            - ./nginx/conf.d/:/etc/nginx/conf.d/
+        networks:
+            - natuna-jaya
+
+networks:
+    natuna-jaya:
+        driver: bridge
+
+volumes:
+    dbdata:
+        driver: local
