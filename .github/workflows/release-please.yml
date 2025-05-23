@@ -7,13 +7,13 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
-
 jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
       - uses: google-github-actions/release-please-action@v3
         with:
+          token: ${{ secrets.RELEASE_TOKEN }}
           release-type: node
           package-name: natuna-jaya
           changelog-types: |
