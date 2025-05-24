@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.0](https://github.com/ibobdb/natunajaya/compare/v1.1.0...v1.2.0) (2025-05-23)
+
+
+### Features
+
+* add Docker build and push workflow ([f5d908f](https://github.com/ibobdb/natunajaya/commit/f5d908f14f3bca866ba259e025dcc84288e72b20))
+* add Nginx configuration for Docker setup ([0bf3c0e](https://github.com/ibobdb/natunajaya/commit/0bf3c0e6ddad2fb61713595a5262dab6314ef058))
+* configure Supervisor for Docker setup ([d0f48db](https://github.com/ibobdb/natunajaya/commit/d0f48db57643a3f6b0e96a8f82813b18d1c74348))
+* install additional PHP extensions in Dockerfile ([63f4c68](https://github.com/ibobdb/natunajaya/commit/63f4c681e28a8d8c00af909f48008a01a9c244d3))
+* update Docker build process to use GIT_TAG and configure Nginx ([149238a](https://github.com/ibobdb/natunajaya/commit/149238affbd56c2be7edd74d283768bedaa30321))
+
+
+### Code Refactoring
+
+* update PHP extensions installation in Dockerfile ([4b2303d](https://github.com/ibobdb/natunajaya/commit/4b2303dab3111fd4ec2cd14e54a6e656d3f059ae))
+
 ## [1.1.0](https://github.com/ibobdb/natunajaya/compare/v1.0.0...v1.1.0) (2025-05-23)
 
 
