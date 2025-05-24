@@ -29,7 +29,7 @@ class ScheduleResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return static::getEloquentQuery()
-            ->where('status', 'ready')
+            // ->where('status', 'ready')
             ->count();
     }
 
@@ -149,29 +149,6 @@ class ScheduleResource extends Resource
                         $startDate = $data['start_date'];
                         $carId = $data['car_id'];
 
-                        // Check if there's already a same course scheduled on the same date (ignoring time)
-                        $requestedDate = $startDate instanceof \Carbon\Carbon
-                            ? $startDate->format('Y-m-d')
-                            : \Carbon\Carbon::parse($startDate)->format('Y-m-d');
-
-                        $existingSchedule = Schedule::query()
-                            ->where('id', '!=', $record->id)
-                            ->whereHas('studentCourse', function ($query) use ($record) {
-                                $query->where('course_id', $record->studentCourse->course_id);
-                            })
-                            ->whereRaw('DATE(start_date) = ?', [$requestedDate])
-                            ->first();
-
-                        if ($existingSchedule) {
-                            \Filament\Notifications\Notification::make()
-                                ->title('Schedule Conflict')
-                                ->body("You already have the same course scheduled on this date. Please choose a different date.")
-                                ->danger()
-                                ->persistent()
-                                ->send();
-                            return false;
-                        }
-
                         // Convert to Carbon instance if it's not already
                         $startDateCarbon = $startDate instanceof \Carbon\Carbon
                             ? $startDate
@@ -181,7 +158,70 @@ class ScheduleResource extends Resource
                         $startWindow = $startDateCarbon->copy()->subHours(3);
                         $endWindow = $startDateCarbon->copy()->addHours(3);
 
-                        // Improved query for checking conflicting schedules
+                        // Perform all validations first before deciding what to do
+                        $validationErrors = [];
+
+                        // Check if the instructor is available
+                        $instructorId = $record->studentCourse->instructor_id;
+
+                        // Check session order validation
+                        // If current session is greater than 1, check that all previous sessions are scheduled
+                        // and that this session is not scheduled before the most recent previous session
+                        if ($record->for_session > 1) {
+                            // Find the previous session
+                            $previousSession = Schedule::query()
+                                ->where('student_course_id', $record->student_course_id)
+                                ->where('for_session', $record->for_session - 1)
+                                ->first();
+
+                            if ($previousSession) {
+                                // Check if previous session has a start date
+                                if (!$previousSession->start_date) {
+                                    $validationErrors[] = [
+                                        'title' => 'Session Order Error',
+                                        'message' => "You must schedule session #" . ($record->for_session - 1) . " before scheduling session #" . $record->for_session . "."
+                                    ];
+                                }
+                                // Check if current session is being scheduled before the previous session
+                                else if ($startDateCarbon->lt($previousSession->start_date)) {
+                                    $prevDate = $previousSession->start_date->format('M d, Y H:i');
+                                    $validationErrors[] = [
+                                        'title' => 'Session Order Error',
+                                        'message' => "Session #" . $record->for_session . " cannot be scheduled before session #" . ($record->for_session - 1) . " ($prevDate)."
+                                    ];
+                                }
+                            }
+                        }
+
+                        // Check if instructor has any conflicting schedules
+                        $instructorConflict = Schedule::query()
+                            ->where('id', '!=', $record->id)
+                            ->whereNotNull('start_date')
+                            ->whereHas('studentCourse', function ($query) use ($instructorId) {
+                                $query->where('instructor_id', $instructorId);
+                            })
+                            ->where(function ($query) use ($startWindow, $endWindow, $startDateCarbon) {
+                                // A schedule conflicts if:
+                                // 1. It starts within our window
+                                $query->whereBetween('start_date', [$startWindow, $endWindow]);
+                                // OR 2. Our requested time is within their window (assuming 3 hour sessions)
+                                $query->orWhere(function ($q) use ($startDateCarbon) {
+                                    $q->where('start_date', '<=', $startDateCarbon)
+                                        ->where('start_date', '>=', $startDateCarbon->copy()->subHours(3));
+                                });
+                            })
+                            ->exists();
+
+                        // Instructor availability validation
+                        if ($instructorConflict) {
+                            $instructorName = $record->studentCourse->instructor->name ?? "Your instructor";
+                            $validationErrors[] = [
+                                'title' => 'Instructor Not Available',
+                                'message' => "{$instructorName} is already scheduled within 3 hours of your requested time. Please select a different time."
+                            ];
+                        }
+
+                        // Check if car is available at the requested time
                         $conflictingSchedules = Schedule::query()
                             ->where('id', '!=', $record->id)
                             ->where('car_id', $carId)
@@ -197,9 +237,6 @@ class ScheduleResource extends Resource
                                 });
                             })
                             ->exists();
-
-                        // Perform all validations first before deciding what to do
-                        $validationErrors = [];
 
                         // Car availability validation
                         if ($conflictingSchedules) {
@@ -272,8 +309,36 @@ class ScheduleResource extends Resource
                                 'status' => 'waiting_approval',
                             ]);
 
+                            // Check all schedules for this student_course_id to see if any are waiting for approval
+                            $studentCourseId = $record->student_course_id;
+                            $hasWaitingSchedules = Schedule::where('student_course_id', $studentCourseId)
+                                ->whereIn('status', [
+                                    'waiting_approval',
+                                    'waiting_instructor_approval',
+                                    'waiting_admin_approval'
+                                ])
+                                ->exists();
+
+                            // If any schedules are waiting for approval, update the student_course status
+                            if ($hasWaitingSchedules) {
+                                \App\Models\StudentCourse::where('id', $studentCourseId)
+                                    ->update(['status' => 'waiting_schedule']);
+
+                                \Illuminate\Support\Facades\Log::info(
+                                    'Updated student course status to waiting_schedule',
+                                    ['student_course_id' => $studentCourseId]
+                                );
+                            }
+
                             // Verify values are updated correctly
                             $record->refresh();
+
+                            // Show a success notification
+                            \Filament\Notifications\Notification::make()
+                                ->title('Schedule Updated')
+                                ->body('Your schedule has been submitted and is awaiting approval.')
+                                ->success()
+                                ->send();
 
                             return $record;
                         } catch (\Exception $e) {

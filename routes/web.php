@@ -15,9 +15,9 @@ Route::get('/dashboard', function () {
     $role = $user->role;
 
     // Redirect based on user role
-    if ($role === 'student') {
+    if ($role == 'student') {
         return redirect('/student');
-    } elseif ($role === 'admin') {
+    } elseif ($role == 'admin') {
         return redirect('/admin');
     } elseif ($role === 'instructor') {
         return redirect('/instructor');

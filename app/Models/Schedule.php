@@ -22,7 +22,8 @@ class Schedule extends Model
     'description',
     'instructor_approval',
     'admin_approval',
-    'car_id'
+    'car_id',
+    'instructor_id'
   ];
 
   /**

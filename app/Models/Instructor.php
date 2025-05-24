@@ -15,6 +15,9 @@ class Instructor extends Model
   protected $fillable = [
     'user_id',
     'name',
+    'ongoing_course',
+    'ongoing_sch'
+
   ];
 
   /**

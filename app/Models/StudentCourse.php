@@ -20,6 +20,7 @@ class StudentCourse extends Model
     'status',
     'active_on',
     'score',
+    'instructor_id',
   ];
 
   /**
@@ -46,6 +47,14 @@ class StudentCourse extends Model
   public function student(): BelongsTo
   {
     return $this->belongsTo(Student::class);
+  }
+
+  /**
+   * Get the instructor associated with this student course.
+   */
+  public function instructor(): BelongsTo
+  {
+    return $this->belongsTo(Instructor::class, 'instructor_id');
   }
 
   /**

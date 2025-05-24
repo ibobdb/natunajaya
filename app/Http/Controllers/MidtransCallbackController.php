@@ -104,6 +104,20 @@ class MidtransCallbackController extends Controller
                         'course_id' => $student_course
                     ]);
 
+                    // Get instructor with minimum ongoing courses
+                    $instructor = \App\Models\Instructor::orderBy('ongoing_course', 'asc')
+                        ->first();
+
+                    if (!$instructor) {
+                        Log::error('No instructor found');
+                        throw new \Exception('No instructor available');
+                    }
+
+                    Log::info('Selected instructor', [
+                        'instructor_id' => $instructor->id,
+                        'ongoing_courses' => $instructor->ongoing_course
+                    ]);
+
                     $studentCourse = \App\Models\StudentCourse::updateOrCreate(
                         [
                             'course_id' => $student_course,
@@ -111,13 +125,23 @@ class MidtransCallbackController extends Controller
                         ],
                         [
                             'student_id' => $order->student_id,
-                            'status' => 'active',
+                            'status' => 'schedule_not_set',
                             'active_on' => now(),
+                            'instructor_id' => $instructor->id,
                             'score' => 0,
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]
                     );
+
+                    // Increment the instructor's ongoing course count
+                    $instructor->ongoing_course += 1;
+                    $instructor->save();
+
+                    Log::info('Updated instructor ongoing course count', [
+                        'instructor_id' => $instructor->id,
+                        'new_count' => $instructor->ongoing_course
+                    ]);
 
                     $studentCourseId = $studentCourse->id;
                     Log::info('Successfully created/updated student course record', ['student_course_id' => $studentCourseId]);
