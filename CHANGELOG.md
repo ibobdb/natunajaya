@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.2](https://github.com/ibobdb/natunajaya/compare/v1.3.1...v1.3.2) (2025-05-25)
+
+
+### Bug Fixes
+
+* update Docker login action to use secrets for credentials ([a650529](https://github.com/ibobdb/natunajaya/commit/a6505298adfef5e00cce7be96b77a1999b3e4a9d))
+
+
+### Chores
+
+* update docker-build workflow to remove push trigger ([c2f3d4d](https://github.com/ibobdb/natunajaya/commit/c2f3d4d02aa8567d2f1ae3acca03a6741d4113f3))
+* update workflow trigger for Docker build ([2ec6a29](https://github.com/ibobdb/natunajaya/commit/2ec6a2998136846854e4ca34e43b8cac97014806))
+
 ## [1.3.1](https://github.com/ibobdb/natunajaya/compare/v1.3.0...v1.3.1) (2025-05-25)
 
 
