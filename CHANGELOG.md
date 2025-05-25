@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.0](https://github.com/ibobdb/natunajaya/compare/v1.2.0...v1.3.0) (2025-05-25)
+
+
+### Features
+
+* enhance authentication views with new layout and styles ([99cb892](https://github.com/ibobdb/natunajaya/commit/99cb892060e094b64da6f3b44e5bbf0159ca9b7f))
+* implement schedule management features ([608e250](https://github.com/ibobdb/natunajaya/commit/608e2503c42cf071fadc71d4e1f3ee8cce7a2cd3))
+* update Tailwind CSS configuration with new font families, colors, box shadows, and border colors ([655afe3](https://github.com/ibobdb/natunajaya/commit/655afe3d22b2709afdb59e45df79f6747684d729))
+
 ## [1.2.0](https://github.com/ibobdb/natunajaya/compare/v1.1.0...v1.2.0) (2025-05-23)
 
 
