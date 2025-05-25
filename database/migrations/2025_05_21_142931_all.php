@@ -87,7 +87,7 @@ return new class extends Migration
         // Orders table (created last due to references)
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('invoice_id');
+            $table->string('invoice_id')->unique();
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
             $table->integer('amount');
             $table->integer('final_amount');
