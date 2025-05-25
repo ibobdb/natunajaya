@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.6](https://github.com/ibobdb/natunajaya/compare/v1.3.5...v1.3.6) (2025-05-25)
+
+
+### Bug Fixes
+
+* ensure index on orders.invoice_id before adding foreign key in student_courses ([d7aca74](https://github.com/ibobdb/natunajaya/commit/d7aca74e63979cfb70d2d81984cf5822b330aa4a))
+
 ## [1.3.5](https://github.com/ibobdb/natunajaya/compare/v1.3.4...v1.3.5) (2025-05-25)
 
 
