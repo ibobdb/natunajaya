@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/ibobdb/natunajaya/compare/v1.3.0...v1.3.1) (2025-05-25)
+
+
+### Bug Fixes
+
+* update Docker login action to use environment variables for credentials ([9d040ef](https://github.com/ibobdb/natunajaya/commit/9d040efb5e3b6053abb3e8edc388fbfeac4f6a49))
+
 ## [1.3.0](https://github.com/ibobdb/natunajaya/compare/v1.2.0...v1.3.0) (2025-05-25)
 
 
