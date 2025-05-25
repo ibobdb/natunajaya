@@ -26,7 +26,19 @@ class StudentPanelProvider extends PanelProvider
             ->id('student')
             ->path('student')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => [
+                    50 => '224, 231, 255',  // #e0e7ff
+                    100 => '199, 210, 254', // #c7d2fe
+                    200 => '165, 180, 252', // #a5b4fc
+                    300 => '129, 140, 248', // #818cf8
+                    400 => '99, 102, 241',  // #6366f1
+                    500 => '79, 70, 229',   // #4f46e5
+                    600 => '67, 56, 202',   // #4338ca
+                    700 => '55, 48, 163',   // #3730a3
+                    800 => '49, 46, 129',   // #312e81
+                    900 => '30, 27, 75',    // #1e1b4b
+                ],
+
             ])
             ->discoverResources(in: app_path('Filament/Student/Resources'), for: 'App\\Filament\\Student\\Resources')
             ->discoverPages(in: app_path('Filament/Student/Pages'), for: 'App\\Filament\\Student\\Pages')
@@ -38,6 +50,7 @@ class StudentPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
+            ->darkMode(false)
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
