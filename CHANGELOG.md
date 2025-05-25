@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/ibobdb/natunajaya/compare/v1.3.2...v1.3.3) (2025-05-25)
+
+
+### Bug Fixes
+
+* update supervisor configuration path in Dockerfile ([b1704d8](https://github.com/ibobdb/natunajaya/commit/b1704d8838e2dd8992293df78837f452a6bd28be))
+
 ## [1.3.2](https://github.com/ibobdb/natunajaya/compare/v1.3.1...v1.3.2) (2025-05-25)
 
 
