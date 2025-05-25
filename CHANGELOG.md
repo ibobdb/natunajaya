@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.4](https://github.com/ibobdb/natunajaya/compare/v1.3.3...v1.3.4) (2025-05-25)
+
+
+### Bug Fixes
+
+* update PHP-FPM version in nginx configuration ([fdd3e95](https://github.com/ibobdb/natunajaya/commit/fdd3e950eb5102afd44977e88afc14c8aa4d4a91))
+
+
+### Chores
+
+* add PHP-FPM and nginx programs to supervisord configuration ([fdd3e95](https://github.com/ibobdb/natunajaya/commit/fdd3e950eb5102afd44977e88afc14c8aa4d4a91))
+
 ## [1.3.3](https://github.com/ibobdb/natunajaya/compare/v1.3.2...v1.3.3) (2025-05-25)
 
 
