@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.5](https://github.com/ibobdb/natunajaya/compare/v1.3.4...v1.3.5) (2025-05-25)
+
+
+### Bug Fixes
+
+* update PHP-FPM configuration to use TCP instead of Unix socket ([fdafd56](https://github.com/ibobdb/natunajaya/commit/fdafd56cd00b9f16023961c24b251b8877176720))
+
 ## [1.3.4](https://github.com/ibobdb/natunajaya/compare/v1.3.3...v1.3.4) (2025-05-25)
 
 
