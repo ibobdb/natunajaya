@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.7](https://github.com/ibobdb/natunajaya/compare/v1.3.6...v1.3.7) (2025-05-25)
+
+
+### Bug Fixes
+
+* **nginx:** set server_name for the Nginx configuration ([78163f9](https://github.com/ibobdb/natunajaya/commit/78163f91767921edaba52a99419de76702376cf1))
+* **orders:** make invoice_id unique in orders table ([5ffe7f0](https://github.com/ibobdb/natunajaya/commit/5ffe7f043f6602c01c7d9e8819e9982cd7b9530e))
+
 ## [1.3.6](https://github.com/ibobdb/natunajaya/compare/v1.3.5...v1.3.6) (2025-05-25)
 
 
