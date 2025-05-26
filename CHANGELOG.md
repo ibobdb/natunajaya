@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.9](https://github.com/ibobdb/natunajaya/compare/v1.3.8...v1.3.9) (2025-05-26)
+
+
+### Code Refactoring
+
+* **nginx:** simplify server configuration by removing HTTP to HTTPS redirection ([113fe54](https://github.com/ibobdb/natunajaya/commit/113fe5406add9a835c90b1e4e3294e393f39a20a))
+
 ## [1.3.8](https://github.com/ibobdb/natunajaya/compare/v1.3.7...v1.3.8) (2025-05-26)
 
 
