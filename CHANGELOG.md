@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.8](https://github.com/ibobdb/natunajaya/compare/v1.3.7...v1.3.8) (2025-05-26)
+
+
+### Bug Fixes
+
+* **nginx:** update server configuration for HTTP to HTTPS redirection ([1360552](https://github.com/ibobdb/natunajaya/commit/1360552b716a8fcb2a881e6c0bd3ce3c4c20e4f0))
+
 ## [1.3.7](https://github.com/ibobdb/natunajaya/compare/v1.3.6...v1.3.7) (2025-05-25)
 
 
