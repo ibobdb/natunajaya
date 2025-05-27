@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.10](https://github.com/ibobdb/natunajaya/compare/v1.3.9...v1.3.10) (2025-05-27)
+
+
+### Bug Fixes
+
+* **AppServiceProvider:** enforce HTTPS scheme in production environment ([57f974d](https://github.com/ibobdb/natunajaya/commit/57f974dee122d5f69023c1b57488a6728410b777))
+
 ## [1.3.9](https://github.com/ibobdb/natunajaya/compare/v1.3.8...v1.3.9) (2025-05-26)
 
 
