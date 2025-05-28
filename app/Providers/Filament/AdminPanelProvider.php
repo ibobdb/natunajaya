@@ -28,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->registration(false)
             ->colors([
                 'primary' => [
                     50 => '224, 231, 255',  // #e0e7ff

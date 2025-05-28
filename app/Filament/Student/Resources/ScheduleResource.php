@@ -368,6 +368,11 @@ class ScheduleResource extends Resource
     }
     public static function getEloquentQuery(): Builder
     {
+        if (!auth()->user()) {
+            // Return an empty query if there's no authenticated user
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+        
         return parent::getEloquentQuery()
             ->whereHas('studentCourse', function ($query) {
                 $query->whereHas('student', function ($query) {
