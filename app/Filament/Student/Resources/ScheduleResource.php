@@ -121,7 +121,6 @@ class ScheduleResource extends Resource
                             ]),
                         Forms\Components\Select::make('car_id')
                             ->label('Car')
-                            ->required()
                             ->options(function (Schedule $record) {
                                 return \App\Models\Car::whereIn('type', function ($query) use ($record) {
                                     $query->select('courses.default_car_type')
@@ -135,7 +134,7 @@ class ScheduleResource extends Resource
                             })
                             ->searchable()
                             ->preload()
-                            ->helperText('Only showing cars compatible with this course')
+                            ->helperText('Optional. Only showing cars compatible with this course')
                     ])
                     ->requiresConfirmation()
                     ->modalDescription('After submitting a new date, you will need to wait for both instructor and admin approval before the schedule is confirmed.')
@@ -372,7 +371,7 @@ class ScheduleResource extends Resource
             // Return an empty query if there's no authenticated user
             return parent::getEloquentQuery()->whereRaw('1 = 0');
         }
-        
+
         return parent::getEloquentQuery()
             ->whereHas('studentCourse', function ($query) {
                 $query->whereHas('student', function ($query) {

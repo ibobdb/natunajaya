@@ -25,6 +25,9 @@ class InstructorPanelProvider extends PanelProvider
         return $panel
             ->id('instructor')
             ->path('instructor')
+            ->login(false)
+            ->registration(false)
+            ->sidebarWidth('w-72')
             ->colors([
                 'primary' => [
                     50 => '224, 231, 255',  // #e0e7ff
