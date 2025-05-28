@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.11](https://github.com/ibobdb/natunajaya/compare/v1.3.10...v1.3.11) (2025-05-27)
+
+
+### Bug Fixes
+
+* **AppServiceProvider:** import URL facade for HTTPS enforcement ([89d1d9a](https://github.com/ibobdb/natunajaya/commit/89d1d9aab2eb6a959c3e40c65444b6b41dbe9208))
+
 ## [1.3.10](https://github.com/ibobdb/natunajaya/compare/v1.3.9...v1.3.10) (2025-05-27)
 
 
