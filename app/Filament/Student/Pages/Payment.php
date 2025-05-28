@@ -104,6 +104,7 @@ class Payment extends Page
     }
 
     // Add the payment status handling methods
+
     public function paymentSuccess($result)
     {
         // The Midtrans callback will update the database
@@ -111,25 +112,77 @@ class Payment extends Page
 
         // Reload the order to get the latest status
         $this->order->refresh();
-
-        // Show success message
-        $this->dispatch('notify', [
-            'type' => 'success',
-            'message' => 'Payment completed successfully!'
+        Log::info('Payment success for order', [
+            'order_id' => $this->order->id,
+            'result' => $result
         ]);
 
-        // Redirect to receipt or dashboard after short delay
-        $this->redirectRoute('student.dashboard', navigate: true);
+        // Run MidtransCallbackController handle function with the payment result
+        try {
+            $callbackController = new \App\Http\Controllers\MidtransCallbackController();
+
+            // Create the notification data structure Midtrans would send
+            $notificationData = [
+                'transaction_status' => $result['transaction_status'] ?? 'settlement',
+                'order_id' => $result['order_id'] ?? $this->order->invoice_id,
+                'transaction_id' => $result['transaction_id'] ?? null,
+                'status_code' => $result['status_code'] ?? '200',
+                'payment_type' => $result['payment_type'] ?? null,
+                'gross_amount' => $result['gross_amount'] ?? $this->order->amount,
+                'fraud_status' => $result['fraud_status'] ?? 'accept',
+                'currency' => $result['currency'] ?? 'IDR'
+            ];
+
+            // Create a request with the JSON content that the controller expects
+            $request = Request::create(
+                '/midtrans-callback',
+                'POST',
+                [],  // no query parameters
+                [],  // no cookies
+                [],  // no files
+                [],  // no server variables
+                json_encode($notificationData)  // JSON body content
+            );
+
+            // Set the content type to application/json
+            $request->headers->set('Content-Type', 'application/json');
+
+            $callbackController->handle($request);
+
+            // Refresh order after callback processing
+            $this->order->refresh();
+
+            Notification::make()
+                ->title('Payment successful')
+                ->body('Your course has been activated. Please set up your schedule.')
+                ->success()
+                ->send();
+            // Redirect to schedule page
+            $this->redirect('/student/courses', navigate: true);
+        } catch (\Exception $e) {
+            Log::error('Error processing payment callback: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            Notification::make()
+                ->title('Error updating payment status')
+                ->body('Your payment was received but there was an error updating your account')
+                ->warning()
+                ->send();
+        }
+
+        // Comment out the immediate redirect to allow notifications to be seen
+        // $this->redirect('/student/courses', navigate: true);
     }
 
     // Handle other payment statuses as needed
+
     public function paymentPending($result)
     {
         $this->dispatch('notify', [
             'type' => 'warning',
             'message' => 'Your payment is being processed. We will update you once completed.'
         ]);
-
         // Reload the order
         $this->order->refresh();
     }

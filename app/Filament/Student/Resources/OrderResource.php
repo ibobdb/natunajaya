@@ -75,7 +75,7 @@ class OrderResource extends Resource
                 Forms\Components\TextInput::make('invoice_id')
                     ->required()
                     ->default(function () {
-                        return time() . '-' . rand(1000, 9999);
+                        return 'INV-' . time() . '-' . rand(1000, 9999);
                     })
                     ->disabled(),
 
@@ -176,7 +176,7 @@ class OrderResource extends Resource
     {
         static::creating(function ($order) {
             if (empty($order->invoice_id)) {
-                $order->invoice_id =  time() . '-' . rand(1000, 9999);
+                $order->invoice_id = 'INV-' . time() . '-' . rand(1000, 9999);
             }
             if (empty($order->status)) {
                 $order->status = 'pending';

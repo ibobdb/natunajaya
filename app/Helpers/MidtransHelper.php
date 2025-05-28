@@ -2,120 +2,54 @@
 
 namespace App\Helpers;
 
-use Illuminate\Support\Facades\Config;
-use Midtrans\Config as MidtransConfig;
+use Illuminate\Support\Facades\Log;
+use Midtrans\Config;
 use Midtrans\Snap;
-use Midtrans\Transaction;
-use Midtrans\Notification;
 
 class MidtransHelper
 {
-  public function __construct()
-  {
-    // Set Midtrans configuration from config file
-    MidtransConfig::$serverKey = Config::get('midtrans.server_key');
-    MidtransConfig::$clientKey = Config::get('midtrans.client_key');
-    MidtransConfig::$isProduction = Config::get('midtrans.is_production');
-    MidtransConfig::$is3ds = Config::get('midtrans.is_3ds');
-    MidtransConfig::$isSanitized = Config::get('midtrans.is_sanitized');
-    MidtransConfig::$appendNotifUrl = Config::get('midtrans.append_notif_url');
-  }
-
-  /**
-   * Create Snap payment transaction
-   *
-   * @param array $params Payment parameters
-   * @return string Snap token
-   */
-  public function createTransaction(array $params)
-  {
-    return Snap::getSnapToken($params);
-  }
-
-  /**
-   * Create payment page URL
-   *
-   * @param array $params Payment parameters
-   * @return string Redirect URL
-   */
-  public function createPaymentUrl(array $params)
-  {
-    return Snap::createTransaction($params)->redirect_url;
-  }
-
-  /**
-   * Get transaction status
-   *
-   * @param string $orderId Order ID
-   * @return object Transaction status object
-   */
-  public function getStatus($orderId)
-  {
-    return Transaction::status($orderId);
-  }
-
-  /**
-   * Verify payment notification
-   *
-   * @return Notification
-   */
-  public function parseNotification()
-  {
-    return new Notification();
-  }
-
-  /**
-   * Get transaction status message by status code
-   *
-   * @param string $statusCode
-   * @return string
-   */
-  public function getStatusMessage($statusCode)
-  {
-    $statusMessages = Config::get('midtrans.status_code');
-    return $statusMessages[$statusCode] ?? 'Unknown status';
-  }
-
-  /**
-   * Handle transaction callback/notification
-   *
-   * @param Notification $notification
-   * @return array
-   */
-  public function handleNotification(Notification $notification)
-  {
-    $transaction = $notification->transaction_status;
-    $type = $notification->payment_type;
-    $orderId = $notification->order_id;
-    $fraud = $notification->fraud_status;
-
-    $status = null;
-
-    if ($transaction == 'capture') {
-      // For credit card transaction, we need to check whether transaction is challenge by FDS or not
-      if ($type == 'credit_card') {
-        if ($fraud == 'challenge') {
-          $status = 'challenged';
-        } else {
-          $status = 'success';
-        }
-      }
-    } else if ($transaction == 'settlement') {
-      $status = 'success';
-    } else if ($transaction == 'pending') {
-      $status = 'pending';
-    } else if ($transaction == 'deny') {
-      $status = 'denied';
-    } else if ($transaction == 'expire') {
-      $status = 'expired';
-    } else if ($transaction == 'cancel') {
-      $status = 'canceled';
+    public function __construct()
+    {
+        // Set Midtrans configuration
+        Config::$serverKey = config('services.midtrans.server_key');
+        Config::$clientKey = config('services.midtrans.client_key');
+        Config::$isProduction = config('services.midtrans.is_production');
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+        
+        // For debugging
+        Log::info('Midtrans Config: ', [
+            'serverKey' => Config::$serverKey ? 'Set (hidden)' : 'Not set',
+            'clientKey' => Config::$clientKey ? 'Set (hidden)' : 'Not set',
+            'isProduction' => Config::$isProduction,
+            'apiUrl' => Config::$isProduction ? 'https://app.midtrans.com' : 'https://app.sandbox.midtrans.com'
+        ]);
     }
 
-    return [
-      'status' => $status,
-      'order_id' => $orderId,
-      'raw' => $notification
-    ];
-  }
+    /**
+     * Create Snap payment transaction
+     *
+     * @param array $params Payment parameters
+     * @return string Snap token
+     */
+    public function createTransaction(array $params)
+    {
+        try {
+            // Log the parameters (exclude sensitive data)
+            Log::info('Creating Midtrans transaction with params', [
+                'order_id' => $params['transaction_details']['order_id'] ?? 'not set',
+                'gross_amount' => $params['transaction_details']['gross_amount'] ?? 'not set'
+            ]);
+            
+            // Create Snap token
+            $snapToken = Snap::getSnapToken($params);
+            
+            Log::info('Snap token created successfully', ['token' => $snapToken ? 'Set (hidden)' : 'Not created']);
+            
+            return $snapToken;
+        } catch (\Exception $e) {
+            Log::error('Failed to create Midtrans transaction: ' . $e->getMessage());
+            throw $e;
+        }
+    }
 }
