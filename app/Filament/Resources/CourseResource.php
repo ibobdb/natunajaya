@@ -47,6 +47,26 @@ class CourseResource extends Resource
                     ->required()
                     ->numeric()
                     ->prefix('$'),
+                Forms\Components\Select::make('default_car_type')
+                    ->label('Default Car Type')
+                    ->options([
+                        'matic' => 'Matic',
+                        'manual' => 'Manual',
+                    ])
+                    ->required()
+                    ->default('matic')
+                    ->live(),
+                Forms\Components\Select::make('default_car')
+                    ->label('Default Car')
+                    ->options(function (callable $get) {
+                        $type = $get('default_car_type');
+                        if (!$type) {
+                            return [];
+                        }
+                        return \App\Models\Car::where('type', $type)->pluck('name', 'id');
+                    })
+                    ->required()
+                    ->searchable(),
                 Forms\Components\DatePicker::make('expired'),
             ]);
     }

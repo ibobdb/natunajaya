@@ -19,6 +19,8 @@ class Course extends Model
         'duration_session',
         'duration',
         'price',
+        'default_car',
+        'default_car_type',
         'expired',
     ];
 
