@@ -7,9 +7,6 @@
 
 	<title>{{ env('APP_NAME', 'Natuna Driving Academy') }}</title>
 
-	{{-- <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" /> --}}
 
 	<!-- Fade-in Animation CSS -->
 	<style>
@@ -68,12 +65,8 @@
 		}
 	</style>
 
-	<!-- Styles / Scripts -->
-	@if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
 	@vite(['resources/css/app.css', 'resources/js/app.js'])
-	@else
 
-	@endif
 </head>
 
 <body class="opacity-0 transition-opacity duration-500" onload="document.body.classList.add('opacity-100')">
@@ -152,132 +145,7 @@
 
 			<!-- Right Section (Schedule Check Card) -->
 			<div class="flex-1 flex justify-center mt-12 md:mt-0 delay-500">
-				<div
-					class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md transform hover:scale-[1.02] transition-transform duration-300">
-					<h3 class="text-gray-900 text-xl font-semibold mb-2 flex items-center">
-						<svg class="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-							xmlns="http://www.w3.org/2000/svg">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-								d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-							</path>
-						</svg>
-						Cek Jadwal Pelatihan
-					</h3>
-					<p class="text-gray-600 text-sm mb-4">
-						Ingin tahu jadwal tersedia? Cek ketersediaan jadwal instruktur dan kelas kami sekarang.
-					</p>
-
-					<form class="space-y-3">
-						<div class="flex space-x-2">
-							<div class="w-1/2 relative">
-								<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-									<svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-										<path fill-rule="evenodd"
-											d="M4 2a1 1 0 011-1h10a1 1 0 011 1v1H4V2zm-1 3a1 1 0 10-2 0v11a3 3 0 003 3h10a3 3 0 003-3V5a1 1 0 10-2 0v11a1 1 0 01-1 1H4a1 1 0 01-1-1V5z"
-											clip-rule="evenodd"></path>
-									</svg>
-								</div>
-								<select class="w-full pl-9 pr-3 py-2 border rounded">
-									<option value="">Pilih Kursus</option>
-									<option value="basic">SIM A</option>
-									<option value="motorcycle">SIM C</option>
-									<option value="professional">Profesional</option>
-								</select>
-							</div>
-							<div class="w-1/2 relative">
-								<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-									<svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-										<path fill-rule="evenodd"
-											d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-											clip-rule="evenodd"></path>
-									</svg>
-								</div>
-								<select class="w-full pl-9 pr-3 py-2 border rounded">
-									<option value="">Pilih Lokasi</option>
-									<option value="pusat">Jakarta Pusat</option>
-									<option value="selatan">Jakarta Selatan</option>
-									<option value="barat">Jakarta Barat</option>
-								</select>
-							</div>
-						</div>
-						<div class="flex space-x-2">
-							<div class="w-1/2 relative">
-								<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-									<svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-										<path
-											d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z">
-										</path>
-										<path
-											d="M3 4h3.382a.5.5 0 01.493.418l1.5 9A.5.5 0 018.382 14H14a.5.5 0 01.5.5v1a.5.5 0 01-.5.5H8.382a2 2 0 01-1.973-1.672L4.91 5H3.5A.5.5 0 013 4.5v-1A.5.5 0 013.5 3H4a.5.5 0 01.5.5V4z">
-										</path>
-									</svg>
-								</div>
-								<select class="w-full pl-9 pr-3 py-2 border rounded">
-									<option value="">Pilih Kendaraan</option>
-									<option value="manual">Manual</option>
-									<option value="matic">Matic</option>
-									<option value="sport">Sport</option>
-								</select>
-							</div>
-							<div class="w-1/2 relative">
-								<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-									<svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-										<path fill-rule="evenodd"
-											d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-											clip-rule="evenodd"></path>
-									</svg>
-								</div>
-								<select class="w-full pl-9 pr-3 py-2 border rounded">
-									<option value="">Level Kemampuan</option>
-									<option value="pemula">Pemula</option>
-									<option value="menengah">Menengah</option>
-									<option value="mahir">Mahir</option>
-								</select>
-							</div>
-						</div>
-						<div class="flex space-x-2">
-							<div class="w-1/2 relative">
-								<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-									<svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-										<path fill-rule="evenodd"
-											d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-											clip-rule="evenodd"></path>
-									</svg>
-								</div>
-								<input type="date" class="w-full pl-9 pr-3 py-2 border rounded"
-									min="{{ date('Y-m-d') }}" />
-							</div>
-							<div class="w-1/2 relative">
-								<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-									<svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-										<path fill-rule="evenodd"
-											d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-											clip-rule="evenodd"></path>
-									</svg>
-								</div>
-								<select class="w-full pl-9 pr-3 py-2 border rounded">
-									<option value="">Pilih Waktu</option>
-									<option value="pagi">Pagi (08:00-12:00)</option>
-									<option value="siang">Siang (13:00-16:00)</option>
-									<option value="sore">Sore (16:00-19:00)</option>
-								</select>
-							</div>
-						</div>
-						<button type="submit"
-							class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2.5 rounded font-semibold mt-2 transition-colors duration-300 flex items-center justify-center">
-							<span>Cek Ketersediaan Jadwal</span>
-							<svg class="ml-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20"
-								xmlns="http://www.w3.org/2000/svg">
-								<path fill-rule="evenodd"
-									d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-									clip-rule="evenodd"></path>
-							</svg>
-						</button>
-					</form>
-					<p class="text-xs text-gray-500 mt-3 text-center">
-						*Jadwal tersedia akan ditampilkan berdasarkan pilihan Anda
-					</p>
-				</div>
+				<x-check-schedule :courses="$courses" :cars="$cars" />
 			</div>
 		</div>
 	</section>
@@ -884,7 +752,7 @@
 							<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
 								xmlns="http://www.w3.org/2000/svg">
 								<path fill-rule="evenodd"
-									d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1H6z"
+									d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4a.5.5 0 01-.5-.5V4a.5.5 0 01.5-.5H6z"
 									clip-rule="evenodd"></path>
 							</svg>
 							Lihat Jadwal

@@ -2,13 +2,11 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\MidtransCallbackController;
+use App\Http\Controllers\PageController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [PageController::class, 'index'])->name('welcome');
+Route::get('/check-schedule', [PageController::class, 'checkSchedule'])->name('check-schedule');
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
