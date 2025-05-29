@@ -22,7 +22,7 @@
                         <div class="flex justify-between">
                             <span class="text-gray-500 dark:text-gray-400">Description:</span>
                             <span
-                                class="text-gray-900 dark:text-gray-100">{{ $this->order->course->description ?? 'No description available' }}</span>
+                                class="text-gray-500 dark:text-gray-100 text-sm">{{ $this->order->course->description ?? 'No description available' }}</span>
                         </div>
 
                         <div class="flex justify-between">

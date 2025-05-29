@@ -40,7 +40,14 @@ class OrderResource extends Resource
             ->schema([
                 Forms\Components\Select::make('course_id')
                     ->label('Course')
-                    ->options(\App\Models\Course::all()->pluck('name', 'id'))
+                    ->options(function () {
+                        return \App\Models\Course::all()->map(function ($course) {
+                            return [
+                                'id' => $course->id,
+                                'label' => "{$course->name} ({$course->category})"
+                            ];
+                        })->pluck('label', 'id');
+                    })
                     ->required()
                     ->searchable()
                     ->preload()
@@ -52,13 +59,16 @@ class OrderResource extends Resource
                                 $set('amount', $course->price);
                                 $set('final_amount', $course->price);
                                 $set('invoice_id', 'INV-' . time() . '-' . rand(1000, 9999));
+                                $set('session', $course->session);
                                 $set('status', 'pending');
+                                $set('description', $course->description);
                             }
                         } else {
                             $set('amount', null);
                             $set('final_amount', null);
                             $set('invoice_id', null);
                             $set('status', null);
+                            $set('description', null);
                         }
                     }),
 
@@ -74,14 +84,19 @@ class OrderResource extends Resource
 
                 Forms\Components\TextInput::make('invoice_id')
                     ->required()
+                    ->hidden()
                     ->default(function () {
                         return 'INV-' . time() . '-' . rand(1000, 9999);
                     })
                     ->disabled(),
 
-                Forms\Components\TextInput::make('amount')
-                    ->numeric()
+                Forms\Components\Textarea::make('description')
+                    ->label('Description')
+                    ->disabled()
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('session')
                     ->required()
+                    ->label('Pertemuan')
                     ->disabled(),
                 Forms\Components\TextInput::make('final_amount')
                     ->numeric()

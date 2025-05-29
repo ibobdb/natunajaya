@@ -21,6 +21,7 @@ class Course extends Model
         'price',
         'default_car',
         'default_car_type',
+        'days',
         'expired',
     ];
 
