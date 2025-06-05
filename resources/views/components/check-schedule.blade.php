@@ -1,5 +1,5 @@
 <div
-    class="bg-white rounded-lg z-99 shadow-2xl p-8 w-full max-w-md transform hover:scale-[1.02] transition-transform duration-300 overflow-scroll">
+    class="bg-white rounded-lg z-99 shadow-2xl p-8 w-full max-w-md transform hover:scale-[1.02] transition-transform duration-300">
     <h3 class="text-gray-900 text-xl font-semibold mb-2 flex items-center">
         <svg class="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg">
