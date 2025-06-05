@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.5.0](https://github.com/ibobdb/natunajaya/compare/v1.4.0...v1.5.0) (2025-06-05)
+
+
+### Features
+
+* implement schedule checking functionality ([58be607](https://github.com/ibobdb/natunajaya/commit/58be607e77fd416922314ddc93b0c1c93bed2bb6))
+* **OrderResource:** enhance course selection with category and description ([7545cb8](https://github.com/ibobdb/natunajaya/commit/7545cb88366df117a544c79f5277398668327e77))
+* **ScheduleOverview:** add schedule overview widget for student panel ([644bc25](https://github.com/ibobdb/natunajaya/commit/644bc25a06d6d8302fa4cc12e398cd13ee0a191a))
+* **welcome:** update course package details and pricing ([3bd18e8](https://github.com/ibobdb/natunajaya/commit/3bd18e8b7923e91c609787e14da8ec78247d1761))
+
+
+### Bug Fixes
+
+* **welcome:** update text color and size for clarity in instructions ([5a3353d](https://github.com/ibobdb/natunajaya/commit/5a3353d6db644bce3279bc3cee38fcf9c86c10a3))
+
 ## [1.4.0](https://github.com/ibobdb/natunajaya/compare/v1.3.11...v1.4.0) (2025-05-28)
 
 
