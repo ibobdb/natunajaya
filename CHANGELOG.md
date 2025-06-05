@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.1](https://github.com/ibobdb/natunajaya/compare/v1.5.0...v1.5.1) (2025-06-05)
+
+
+### Bug Fixes
+
+* **check-schedule:** add margin-top to improve layout spacing ([ecadb52](https://github.com/ibobdb/natunajaya/commit/ecadb524d53eda666fb5e83fd48c659fabb9bc2e))
+* **check-schedule:** remove overflow-scroll class for better layout ([aee87e1](https://github.com/ibobdb/natunajaya/commit/aee87e1bca1efa7d2787deae6c84a2c87cb1d0d1))
+
 ## [1.5.0](https://github.com/ibobdb/natunajaya/compare/v1.4.0...v1.5.0) (2025-06-05)
 
 
