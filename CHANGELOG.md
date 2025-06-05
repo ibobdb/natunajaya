@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.4.0](https://github.com/ibobdb/natunajaya/compare/v1.3.11...v1.4.0) (2025-05-28)
+
+
+### Features
+
+* **CourseResource:** add default car type and car selection fields ([c1779e2](https://github.com/ibobdb/natunajaya/commit/c1779e22467b8541ce392f6095eed4c6c2924afc))
+* **panel:** update sidebar width and disable login/registration for instructor and student panels ([8a9b304](https://github.com/ibobdb/natunajaya/commit/8a9b3047b9f9eccbba9519438a26646255edb8d7))
+* **payment:** enhance payment processing and notifications ([093c30c](https://github.com/ibobdb/natunajaya/commit/093c30cd633c10acfd9d544c804fb4dbb5422a5b))
+
+
+### Bug Fixes
+
+* **AdminPanelProvider:** disable login for admin panel ([294e55f](https://github.com/ibobdb/natunajaya/commit/294e55fc3e5e35c474cc9165e393a2bed1e74d7d))
+* **OrderResource:** remove 'INV-' prefix from invoice_id generation ([cdc6ab0](https://github.com/ibobdb/natunajaya/commit/cdc6ab072e83340b7ddc6a3ab287992ab3622867))
+* **ScheduleResource:** return empty query for unauthenticated users ([cdc6ab0](https://github.com/ibobdb/natunajaya/commit/cdc6ab072e83340b7ddc6a3ab287992ab3622867))
+
+
+### Chores
+
+* **AdminPanelProvider:** disable registration in admin panel ([cdc6ab0](https://github.com/ibobdb/natunajaya/commit/cdc6ab072e83340b7ddc6a3ab287992ab3622867))
+
 ## [1.3.11](https://github.com/ibobdb/natunajaya/compare/v1.3.10...v1.3.11) (2025-05-27)
 
 
