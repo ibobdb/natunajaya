@@ -644,7 +644,7 @@
 					</div>
 					<div class="h-14">
 						<h3 class="text-lg font-bold mb-1">Daftar & Lengkapi Data</h3>
-						<p class="text-gray-700 text-sm">
+						<p class="text-gray-500 text-xs">
 							Isi formulir pendaftaran dan lengkapi data diri Anda.
 						</p>
 					</div>
@@ -689,7 +689,7 @@
 					</div>
 					<div class="h-14">
 						<h3 class="text-lg font-bold mb-1">Cek Jadwal</h3>
-						<p class="text-gray-700 text-sm">
+						<p class="text-gray-500 text-xs">
 							Pilih jadwal pelatihan yang sesuai waktu Anda.
 						</p>
 					</div>
@@ -740,7 +740,7 @@
 					</div>
 					<div class="h-14">
 						<h3 class="text-lg font-bold mb-1">Pembayaran</h3>
-						<p class="text-gray-700 text-sm">
+						<p class="text-gray-500 text-xs">
 							Bayar dengan metode pembayaran pilihan Anda.
 						</p>
 					</div>
@@ -792,7 +792,7 @@
 					</div>
 					<div class="h-14">
 						<h3 class="text-lg font-bold mb-1">Mulai Kursus</h3>
-						<p class="text-gray-700 text-sm">
+						<p class="text-gray-500 text-xs">
 							Ikuti jadwal dan mulai kursus mengemudi Anda.
 						</p>
 					</div>
