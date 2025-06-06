@@ -13,15 +13,7 @@ class Dashboard extends BaseDashboard
   protected function getHeaderWidgets(): array
   {
     return [
-      \App\Filament\Widgets\StatsOverview::class,
-    ];
-  }
-
-  protected function getFooterWidgets(): array
-  {
-    return [
-      \App\Filament\Widgets\LatestOrders::class,
-      // \App\Filament\Widgets\RevenueChart::class,
+      // \App\Filament\Widgets\StatsOverview::class,
     ];
   }
 }
