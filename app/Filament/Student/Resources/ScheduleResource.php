@@ -95,16 +95,16 @@ class ScheduleResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->formatStateUsing(fn(string $state): string => str_replace('_', ' ', ucfirst($state))),
-                Tables\Columns\TextColumn::make('instructor_approval')
-                    ->label('Instructor Approval')
-                    ->badge()
-                    ->color(fn($state) => $state ? 'success' : 'danger')
-                    ->formatStateUsing(fn($state) => $state ? 'OK' : 'Pending'),
-                Tables\Columns\TextColumn::make('admin_approval')
-                    ->label('Admin Approval')
-                    ->badge()
-                    ->color(fn($state) => $state ? 'success' : 'danger')
-                    ->formatStateUsing(fn($state) => $state ? 'OK' : 'Pending'),
+                // Tables\Columns\TextColumn::make('instructor_approval')
+                //     ->label('Instructor Approval')
+                //     ->badge()
+                //     ->color(fn($state) => $state ? 'success' : 'danger')
+                //     ->formatStateUsing(fn($state) => $state ? 'OK' : 'Pending'),
+                // Tables\Columns\TextColumn::make('admin_approval')
+                //     ->label('Admin Approval')
+                //     ->badge()
+                //     ->color(fn($state) => $state ? 'success' : 'danger')
+                //     ->formatStateUsing(fn($state) => $state ? 'OK' : 'Pending'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -303,9 +303,9 @@ class ScheduleResource extends Resource
                             $record->update([
                                 'start_date' => $data['start_date'],
                                 'car_id' => $data['car_id'],
-                                'instructor_approval' => 0,
-                                'admin_approval' => 0,
-                                'status' => 'waiting_approval',
+                                'instructor_approval' => 1,
+                                'admin_approval' => 1,
+                                'status' => 'ready',
                             ]);
 
                             // Check all schedules for this student_course_id to see if any are waiting for approval
