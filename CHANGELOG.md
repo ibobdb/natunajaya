@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.2](https://github.com/ibobdb/natunajaya/compare/v1.5.1...v1.5.2) (2025-06-06)
+
+
+### Bug Fixes
+
+* **auth:** update login and register pages for improved layout and navigation ([1b49af5](https://github.com/ibobdb/natunajaya/commit/1b49af5c0da3dfb70427d0580981167819c465b6))
+
+
+### Code Refactoring
+
+* **payment:** streamline Midtrans event handler setup ([942ee21](https://github.com/ibobdb/natunajaya/commit/942ee21c6ed48e2e0e75ebb05027922f4cb9b4e0))
+
 ## [1.5.1](https://github.com/ibobdb/natunajaya/compare/v1.5.0...v1.5.1) (2025-06-05)
 
 
