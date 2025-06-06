@@ -107,7 +107,6 @@
     src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}"
     data-client-key="{{ config('services.midtrans.client_key') }}"></script>
 <script>
-    // Setup the event handler as a function so it can be called multiple times
     function setupMidtransEventHandler() {
         Livewire.on('openMidtransPopup', event => {
             console.log('Payment popup triggered with token:', event.snapToken ? 'Token exists' : 'No token');
@@ -115,11 +114,9 @@
             // Open Midtrans Snap popup with configuration options
             window.snap.pay(event.snapToken, {
                 skipOrderSummary: true,
-                showOrderId: true,
-                gopayMode: "deeplink",
+                showOrderId: true,        
                 uiMode: "modern",
-                onSuccess: function(result){
-                    console.log('Payment successful', result);
+                onSuccess: function(result){        
                     // Jalankan handle midtrans callback controller melalui Livewire
                 @this.paymentSuccess(result);
                 },
