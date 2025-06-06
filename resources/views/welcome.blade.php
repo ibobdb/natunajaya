@@ -79,8 +79,7 @@
 				<img src="{{ asset('assets/img/logo.png') }}" alt="Logo Natuna" class="h-12 filter drop-shadow-md" />
 			</div>
 			<ul class="hidden md:flex space-x-8 delay-200">
-				<li><a href="#keunggulan"
-						class="text-white font-medium hover:text-blue-300 transition-colors">Keunggulan</a></li>
+
 				<li><a href="#kursus" class="text-white font-medium hover:text-blue-300 transition-colors">Program
 						Kursus</a></li>
 				<li><a href="#biaya" class="text-white font-medium hover:text-blue-300 transition-colors">Biaya
@@ -666,176 +665,177 @@
 							<span>Verifikasi cepat</span>
 						</div>
 					</div>
-					<div class="space-y-3 mt-4">
+					{{-- <div class="space-y-3 mt-4">
 						<a href="{{ route('register') }}"
-							class="block w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
-							Daftar Sekarang
-						</a>
-						<a href="#faq" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">Pelajari lebih
-							lanjut</a>
-					</div>
-				</div>
-
-				<!-- Step 2 -->
-				<div
-					class="bg-white rounded-lg shadow-lg p-6 text-center relative hover:shadow-xl hover:transform hover:scale-105 transition-all duration-300 z-10">
-					<div
-						class="absolute -top-3 left-0 right-0 mx-auto w-24 bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
-						Langkah Kedua
-					</div>
-					<div
-						class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4 border-4 border-blue-100">
-						2
-					</div>
-					<div class="h-14">
-						<h3 class="text-lg font-bold mb-1">Cek Jadwal</h3>
-						<p class="text-gray-500 text-xs">
-							Pilih jadwal pelatihan yang sesuai waktu Anda.
-						</p>
-					</div>
-					<div class="my-4 h-16">
-						<div class="flex items-center mb-2 text-sm text-gray-600">
-							<svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-								<path fill-rule="evenodd"
-									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-									clip-rule="evenodd"></path>
-							</svg>
-							<span>Jadwal fleksibel</span>
-						</div>
-						<div class="flex items-center text-sm text-gray-600">
-							<svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-								<path fill-rule="evenodd"
-									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-									clip-rule="evenodd"></path>
-							</svg>
-							<span>Pilihan instruktur</span>
-						</div>
-					</div>
-					<div class="space-y-3 mt-4">
-						<button
-							class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center justify-center">
-							<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
-								xmlns="http://www.w3.org/2000/svg">
-								<path fill-rule="evenodd"
-									d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4a.5.5 0 01-.5-.5V4a.5.5 0 01.5-.5H6z"
-									clip-rule="evenodd"></path>
-							</svg>
-							Lihat Jadwal
-						</button>
-						<a href="#jadwal" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">Pelajari
-							lebih lanjut</a>
-					</div>
-				</div>
-
-				<!-- Step 3 -->
-				<div
-					class="bg-white rounded-lg shadow-lg p-6 text-center relative hover:shadow-xl hover:transform hover:scale-105 transition-all duration-300 z-10">
-					<div
-						class="absolute -top-3 left-0 right-0 mx-auto w-24 bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
-						Langkah Ketiga
-					</div>
-					<div
-						class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4 border-4 border-blue-100">
-						3
-					</div>
-					<div class="h-14">
-						<h3 class="text-lg font-bold mb-1">Pembayaran</h3>
-						<p class="text-gray-500 text-xs">
-							Bayar dengan metode pembayaran pilihan Anda.
-						</p>
-					</div>
-					<div class="my-4 h-16">
-						<div class="flex items-center mb-2 text-sm text-gray-600">
-							<svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-								<path fill-rule="evenodd"
-									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-									clip-rule="evenodd"></path>
-							</svg>
-							<span>Transfer Bank</span>
-						</div>
-						<div class="flex items-center text-sm text-gray-600">
-							<svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-								<path fill-rule="evenodd"
-									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-									clip-rule="evenodd"></path>
-							</svg>
-							<span>E-wallet & QRIS</span>
-						</div>
-					</div>
-					<div class="space-y-3 mt-4">
-						<button
-							class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center justify-center">
-							<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
-								xmlns="http://www.w3.org/2000/svg">
-								<path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
-								<path fill-rule="evenodd"
-									d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100-4 2 2 0 000 4z"
-									clip-rule="evenodd"></path>
-							</svg>
-							Opsi Pembayaran
-						</button>
-						<a href="#pembayaran" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">Pelajari
-							lebih lanjut</a>
-					</div>
-				</div>
-
-				<!-- Step 4 -->
-				<div
-					class="bg-white rounded-lg shadow-lg p-6 text-center relative hover:shadow-xl hover:transform hover:scale-105 transition-all duration-300 z-10">
-					<div
-						class="absolute -top-3 left-0 right-0 mx-auto w-24 bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
-						Langkah Keempat
-					</div>
-					<div
-						class="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4 border-4 border-green-100">
-						4
-					</div>
-					<div class="h-14">
-						<h3 class="text-lg font-bold mb-1">Mulai Kursus</h3>
-						<p class="text-gray-500 text-xs">
-							Ikuti jadwal dan mulai kursus mengemudi Anda.
-						</p>
-					</div>
-					<div class="my-4 h-16">
-						<div class="flex items-center mb-2 text-sm text-gray-600">
-							<svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-								<path fill-rule="evenodd"
-									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
-									clip-rule="evenodd"></path>
-							</svg>
-							<span>Materi siap pakai</span>
-						</div>
-						<div class="flex items-center text-sm text-gray-600">
-							<svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-								<path fill-rule="evenodd"
-									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-									clip-rule="evenodd"></path>
-							</svg>
-							<span>Instruktur berpengalaman</span>
-						</div>
-					</div>
-					<div class="space-y-3 mt-4">
-						<button
-							class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center justify-center">
-							<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
-								xmlns="http://www.w3.org/2000/svg">
-								<path fill-rule="evenodd"
-									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
-									clip-rule="evenodd"></path>
-							</svg>
-							Persiapan Kursus
-						</button>
-						<a href="#persiapan" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">Tips
-							persiapan</a>
-					</div>
-				</div>
-
+					class="block w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium
+					transition-colors">
+					Daftar Sekarang
+					</a>
+					<a href="#faq" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">Pelajari lebih
+						lanjut</a>
+				</div> --}}
 			</div>
 
-			<!-- Mobile view helper text -->
-			<div class="md:hidden text-center mt-6 text-sm text-gray-500">
-				<p>Swipe untuk melihat semua langkah pendaftaran</p>
+			<!-- Step 2 -->
+			<div
+				class="bg-white rounded-lg shadow-lg p-6 text-center relative hover:shadow-xl hover:transform hover:scale-105 transition-all duration-300 z-10">
+				<div
+					class="absolute -top-3 left-0 right-0 mx-auto w-24 bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+					Langkah Kedua
+				</div>
+				<div
+					class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4 border-4 border-blue-100">
+					2
+				</div>
+				<div class="h-14">
+					<h3 class="text-lg font-bold mb-1">Cek Jadwal</h3>
+					<p class="text-gray-500 text-xs">
+						Pilih jadwal pelatihan yang sesuai waktu Anda.
+					</p>
+				</div>
+				<div class="my-4 h-16">
+					<div class="flex items-center mb-2 text-sm text-gray-600">
+						<svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+							<path fill-rule="evenodd"
+								d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+								clip-rule="evenodd"></path>
+						</svg>
+						<span>Jadwal fleksibel</span>
+					</div>
+					<div class="flex items-center text-sm text-gray-600">
+						<svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+							<path fill-rule="evenodd"
+								d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+								clip-rule="evenodd"></path>
+						</svg>
+						<span>Pilihan instruktur</span>
+					</div>
+				</div>
+				{{-- <div class="space-y-3 mt-4">
+					<button
+						class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center justify-center">
+						<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
+							xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd"
+								d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4a.5.5 0 01-.5-.5V4a.5.5 0 01.5-.5H6z"
+								clip-rule="evenodd"></path>
+						</svg>
+						Lihat Jadwal
+					</button>
+					<a href="#jadwal" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">Pelajari
+						lebih lanjut</a>
+				</div> --}}
 			</div>
+
+			<!-- Step 3 -->
+			<div
+				class="bg-white rounded-lg shadow-lg p-6 text-center relative hover:shadow-xl hover:transform hover:scale-105 transition-all duration-300 z-10">
+				<div
+					class="absolute -top-3 left-0 right-0 mx-auto w-24 bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+					Langkah Ketiga
+				</div>
+				<div
+					class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4 border-4 border-blue-100">
+					3
+				</div>
+				<div class="h-14">
+					<h3 class="text-lg font-bold mb-1">Pembayaran</h3>
+					<p class="text-gray-500 text-xs">
+						Bayar dengan metode pembayaran pilihan Anda.
+					</p>
+				</div>
+				<div class="my-4 h-16">
+					<div class="flex items-center mb-2 text-sm text-gray-600">
+						<svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+							<path fill-rule="evenodd"
+								d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+								clip-rule="evenodd"></path>
+						</svg>
+						<span>Transfer Bank</span>
+					</div>
+					<div class="flex items-center text-sm text-gray-600">
+						<svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+							<path fill-rule="evenodd"
+								d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+								clip-rule="evenodd"></path>
+						</svg>
+						<span>E-wallet & QRIS</span>
+					</div>
+				</div>
+				{{-- <div class="space-y-3 mt-4">
+					<button
+						class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center justify-center">
+						<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
+							xmlns="http://www.w3.org/2000/svg">
+							<path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+							<path fill-rule="evenodd"
+								d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100-4 2 2 0 000 4z"
+								clip-rule="evenodd"></path>
+						</svg>
+						Opsi Pembayaran
+					</button>
+					<a href="#pembayaran" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">Pelajari
+						lebih lanjut</a>
+				</div> --}}
+			</div>
+
+			<!-- Step 4 -->
+			<div
+				class="bg-white rounded-lg shadow-lg p-6 text-center relative hover:shadow-xl hover:transform hover:scale-105 transition-all duration-300 z-10">
+				<div
+					class="absolute -top-3 left-0 right-0 mx-auto w-24 bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+					Langkah Keempat
+				</div>
+				<div
+					class="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4 border-4 border-green-100">
+					4
+				</div>
+				<div class="h-14">
+					<h3 class="text-lg font-bold mb-1">Mulai Kursus</h3>
+					<p class="text-gray-500 text-xs">
+						Ikuti jadwal dan mulai kursus mengemudi Anda.
+					</p>
+				</div>
+				<div class="my-4 h-16">
+					<div class="flex items-center mb-2 text-sm text-gray-600">
+						<svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+							<path fill-rule="evenodd"
+								d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
+								clip-rule="evenodd"></path>
+						</svg>
+						<span>Materi siap pakai</span>
+					</div>
+					<div class="flex items-center text-sm text-gray-600">
+						<svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+							<path fill-rule="evenodd"
+								d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+								clip-rule="evenodd"></path>
+						</svg>
+						<span>Instruktur berpengalaman</span>
+					</div>
+				</div>
+				{{-- <div class="space-y-3 mt-4">
+					<button
+						class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center justify-center">
+						<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
+							xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd"
+								d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
+								clip-rule="evenodd"></path>
+						</svg>
+						Persiapan Kursus
+					</button>
+					<a href="#persiapan" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">Tips
+						persiapan</a>
+				</div> --}}
+			</div>
+
+		</div>
+
+		<!-- Mobile view helper text -->
+		<div class="md:hidden text-center mt-6 text-sm text-gray-500">
+			<p>Swipe untuk melihat semua langkah pendaftaran</p>
+		</div>
 		</div>
 	</section>
 
@@ -1013,7 +1013,7 @@
 				<!-- Map -->
 				<div class="h-96 bg-gray-700 rounded-lg overflow-hidden shadow-lg">
 					<iframe
-						src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2934797001183!2d106.82893307428329!3d-6.225969661705288!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3f07b5d3bf7%3A0xf7af0c6a5ad0320f!2sJl.%20Sudirman%2C%20Kota%20Jakarta%20Pusat%2C%20Daerah%20Khusus%20Ibukota%20Jakarta!5e0!3m2!1sen!2sid!4v1688456632908!5m2!1sen!2sid"
+						src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.422126933587!2d106.82194659999999!3d-6.339334199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69ed4b3416c7d5%3A0x421eb6bab577b39d!2sJl.%20Moch%20Kahfi%20II%20No.39%2C%20RT.9%2FRW.8%2C%20Srengseng%20Sawah%2C%20Kec.%20Jagakarsa%2C%20Kota%20Jakarta%20Selatan%2C%20Daerah%20Khusus%20Ibukota%20Jakarta%2012630!5e0!3m2!1sid!2sid!4v1749235436860!5m2!1sid!2sid"
 						width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
 						referrerpolicy="no-referrer-when-downgrade">
 					</iframe>
@@ -1031,7 +1031,9 @@
 							</svg>
 							Alamat Kami
 						</h3>
-						<p class="text-gray-300 pl-8">Jl. Sudirman No. 123, Jakarta Pusat<br>DKI Jakarta, 10220</p>
+						<p class="text-gray-300 pl-8">Jl. Moch Kahfi II No.39, RT.9/RW.8, Srengseng Sawah, Kec.
+							Jagakarsa, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta
+							12630</p>
 					</div>
 
 					<div>
@@ -1045,7 +1047,7 @@
 									d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100-4 2 2 0 000 4z"
 									clip-rule="evenodd"></path>
 							</svg>
-							<span>info@natunadriving.ac.id</span>
+							<span>info@natunadriving.com</span>
 							</li>
 							<li class="flex items-center">
 								<svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor"
@@ -1054,7 +1056,7 @@
 										d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
 									</path>
 								</svg>
-								<span>+62 21 5555 8888</span>
+								<span>+62 812 1392 7692</span>
 							</li>
 					</div>
 
@@ -1070,8 +1072,8 @@
 						</h3>
 						<p class="text-gray-300 pl-8">
 							Senin - Jumat: 08:00 - 18:00<br>
-							Sabtu: 08:00 - 15:00<br>
-							Minggu: Tutup
+							Sabtu: Tutup/Libur <br>
+							Minggu: 08:00 - 15:00
 						</p>
 					</div>
 
@@ -1133,8 +1135,7 @@
 						<ul class="space-y-2 text-sm">
 							<li><a href="#" class="hover:text-blue-400 transition-colors">Kursus SIM A</a></li>
 							<li><a href="#" class="hover:text-blue-400 transition-colors">Kursus SIM C</a></li>
-							<li><a href="#" class="hover:text-blue-400 transition-colors">Kursus Profesional</a></li>
-							<li><a href="#" class="hover:text-blue-400 transition-colors">Paket Khusus</a></li>
+
 						</ul>
 					</div>
 					<div>
@@ -1158,7 +1159,9 @@
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 										d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
 								</svg>
-								<span>Jl. Sudirman No. 123, Jakarta Pusat</span>
+								<span>Jl. Moch Kahfi II No.39, RT.9/RW.8, Srengseng Sawah, Kec. Jagakarsa, Kota Jakarta
+									Selatan, Daerah Khusus Ibukota Jakarta
+									12630</span>
 							</li>
 							<li class="flex items-center">
 								<svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor"
@@ -1167,7 +1170,7 @@
 										d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
 									</path>
 								</svg>
-								<span>info@natunadriving.ac.id</span>
+								<span>info@natunadriving.com</span>
 							</li>
 							<li class="flex items-center">
 								<svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor"
@@ -1176,26 +1179,12 @@
 										d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V19a2 2 0 01-1 1h-1C9.716 21 3 14.284 3 6V5z">
 									</path>
 								</svg>
-								<span>+62 21 5555 8888</span>
+								<a href="https://wa.me/6281213927692" target="_blank">
+									<span>+62 812 1392 7692</span>
+								</a>
 							</li>
 					</div>
 
-					<div>
-						<h3 class="text-xl font-semibold mb-3 flex items-center">
-							<svg class="w-6 h-6 mr-2 text-blue-400" fill="none" stroke="currentColor"
-								viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-								<path fill-rule="evenodd"
-									d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-									clip-rule="evenodd"></path>
-							</svg>
-							Jam Operasional
-						</h3>
-						<p class="text-gray-300 pl-8">
-							Senin - Jumat: 08:00 - 18:00<br>
-							Sabtu: 08:00 - 15:00<br>
-							Minggu: Tutup
-						</p>
-					</div>
 				</div>
 			</div>
 		</footer>

@@ -1,8 +1,10 @@
 <x-guest-layout>
     <div class="flex flex-col items-center">
-        <img src="{{ asset('assets/img/logo.png') }}" alt="Natuna Driving Academy" class="h-16 mb-6">
+        <a href={{ route('welcome') }} class="mb-2">
+            <img src="{{ asset('assets/img/logo.png') }}" alt="Natuna Driving Academy" class="h-16 mb-6">
+        </a>
         <h2 class="text-2xl font-bold text-gray-900 mb-1">Selamat Datang Kembali</h2>
-        <p class="text-gray-600 mb-6">Masuk untuk melanjutkan ke akun Anda</p>
+        <p class="text-gray-600 mb-2">Masuk untuk melanjutkan ke akun Anda</p>
     </div>
 
     <!-- Session Status -->
@@ -80,6 +82,11 @@
                     Daftar sekarang
                 </a>
             </p>
+        </div>
+        <div class="text-center mt-3">
+            <a href="{{ route('welcome') }}" class="text-xs font-medium text-gray-600 hover:text-gray-500">
+                Kembali ke halaman utama
+            </a>
         </div>
     </form>
 
