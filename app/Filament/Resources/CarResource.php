@@ -32,6 +32,10 @@ class CarResource extends Resource
                         'matic' => 'Matic',
                         'manual' => 'Manual',
                     ]),
+                Forms\Components\DatePicker::make('last_kir_check')
+                    ->label('Last KIR Check')
+                    ->nullable()
+                    ->maxDate(now()),
             ]);
     }
 
@@ -43,6 +47,10 @@ class CarResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('last_kir_check')
+                    ->date()
+                    ->sortable()
+                    ->label('Last KIR Check'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -14,6 +14,7 @@ class Car extends Model
   protected $fillable = [
     'name',
     'type',
+    'last_kir_check',
   ];
   public function car()
   {
