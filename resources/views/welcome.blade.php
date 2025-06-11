@@ -325,7 +325,7 @@
 										d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
 										clip-rule="evenodd"></path>
 								</svg>
-								Minggu 08:00 - 16:00
+								Minggu 08:00 - 17:00
 							</li>
 						</ul>
 						<div class="mt-auto flex justify-between items-center">
@@ -479,7 +479,7 @@
 										clip-rule="evenodd"></path>
 								</svg>
 							</div>
-							<span class="text-gray-700"><strong>Minggu / Tanggal Merah</strong> 08:00- 16:00</span>
+							<span class="text-gray-700"><strong>Minggu / Tanggal Merah</strong> 08:00- 17:00</span>
 						</li>
 						<li class="flex items-center">
 							<div
@@ -558,7 +558,7 @@
 								</svg>
 							</div>
 							<span class="text-gray-700"><strong>Pilihan Senin - Jumat Atau Minggu</strong> 08:00 -
-								16:00</span>
+								17:00</span>
 						</li>
 						<li class="flex items-center">
 							<div
@@ -1038,7 +1038,7 @@
 
 					<div>
 						<h3 class="text-xl font-semibold mb-3 flex items-center">
-							<svg class="w-6 h-6 mr-2 text-blue-400" fill="currentColor" viewBox="0 0 20 20"
+							{{-- <svg class="w-6 h-6 mr-2 text-blue-400" fill="currentColor" viewBox="0 0 20 20"
 								xmlns="http://www.w3.org/2000/svg">
 								<path
 									d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z">
@@ -1047,7 +1047,7 @@
 									d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100-4 2 2 0 000 4z"
 									clip-rule="evenodd"></path>
 							</svg>
-							<span>info@natunadriving.com</span>
+							<span>info@natunadriving.com</span> --}}
 							</li>
 							<li class="flex items-center">
 								<svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor"
@@ -1071,9 +1071,9 @@
 							Jam Operasional
 						</h3>
 						<p class="text-gray-300 pl-8">
-							Senin - Jumat: 08:00 - 18:00<br>
+							Senin - Jumat: 08:00 - 17:00<br>
 							Sabtu: Tutup/Libur <br>
-							Minggu: 08:00 - 15:00
+							Minggu: 08:00 - 17:00
 						</p>
 					</div>
 
@@ -1163,7 +1163,7 @@
 									Selatan, Daerah Khusus Ibukota Jakarta
 									12630</span>
 							</li>
-							<li class="flex items-center">
+							{{-- <li class="flex items-center">
 								<svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor"
 									viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1171,7 +1171,7 @@
 									</path>
 								</svg>
 								<span>info@natunadriving.com</span>
-							</li>
+							</li> --}}
 							<li class="flex items-center">
 								<svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor"
 									viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
