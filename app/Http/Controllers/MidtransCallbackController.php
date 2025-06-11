@@ -164,6 +164,7 @@ class MidtransCallbackController extends Controller
                             'start_date' => null,
                             'status' => 'date_not_set',
                             'duration_session' => 'week',
+                            'instructor_id' => $instructor->id, // Add instructor_id from the assigned instructor
                             'created_at' => now(),
                             'updated_at' => now(),
                         ];

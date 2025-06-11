@@ -23,7 +23,9 @@ class Schedule extends Model
     'instructor_approval',
     'admin_approval',
     'car_id',
-    'instructor_id'
+    'instructor_id',
+    'att_student',
+    'att_instructor'
   ];
 
   /**
@@ -34,6 +36,10 @@ class Schedule extends Model
   protected $casts = [
     'start_date' => 'datetime',
     'for_session' => 'integer',
+    'att_student' => 'boolean',
+    'att_instructor' => 'boolean',
+    'instructor_approval' => 'boolean',
+    'admin_approval' => 'boolean',
   ];
 
   /**
@@ -58,5 +64,13 @@ class Schedule extends Model
   public function car(): BelongsTo
   {
     return $this->belongsTo(Car::class);
+  }
+
+  /**
+   * Get the instructor associated with this schedule.
+   */
+  public function instructor(): BelongsTo
+  {
+    return $this->belongsTo(Instructor::class);
   }
 }

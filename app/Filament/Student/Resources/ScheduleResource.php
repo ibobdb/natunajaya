@@ -5,6 +5,7 @@ namespace App\Filament\Student\Resources;
 use App\Filament\Student\Resources\ScheduleResource\Pages;
 use App\Filament\Student\Resources\ScheduleResource\RelationManagers;
 use App\Models\Schedule;
+use App\Models\Instructor;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -49,28 +50,41 @@ class ScheduleResource extends Resource
     {
         return $table
             ->defaultSort(function (Builder $query) {
-                $query->orderByRaw('CASE WHEN start_date IS NULL THEN 1 ELSE 0 END, start_date ASC');
+                // The strategy here is to use a subquery to get the first start_date for each course
+                // Create a subquery to get the earliest start date for each student_course_id
+                $subquery = \DB::table('schedules as s')
+                    ->select('s.student_course_id', \DB::raw('MIN(s.start_date) as first_start_date'))
+                    ->whereNotNull('s.start_date')
+                    ->groupBy('s.student_course_id');
+
+                // Join with the main query
+                $query->join('student_courses', 'schedules.student_course_id', '=', 'student_courses.id')
+                    ->join('courses', 'student_courses.course_id', '=', 'courses.id')
+                    ->leftJoinSub($subquery, 'first_dates', function ($join) {
+                        $join->on('schedules.student_course_id', '=', 'first_dates.student_course_id');
+                    })
+                    // First group by course name
+                    ->orderBy('courses.name', 'asc')
+                    // Then sort courses by their earliest scheduled date
+                    ->orderByRaw('CASE WHEN first_dates.first_start_date IS NULL THEN 1 ELSE 0 END')
+                    ->orderBy('first_dates.first_start_date', 'asc')
+                    // Within each course, order by session number
+                    ->orderBy('schedules.for_session', 'asc')
+                    // Keep the select focused on schedules table only
+                    ->select('schedules.*');
             })
+            ->recordUrl(null) // Disable default navigation on row click
+            ->recordAction('view') // Action to trigger when clicking on row
 
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('Schedule ID')
-                    ->searchable()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('studentCourse.course.name')
                     ->label('Course Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('for_session')
+                    ->label('Session')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('car.name')
-                    ->label('Car')
-                    ->searchable()
-                    ->sortable()
-                    ->placeholder('Car not set')
-                    ->badge(fn($state) => $state === null)
-                    ->color(fn($state) => $state === null ? 'danger' : null),
                 Tables\Columns\TextColumn::make('start_date')
                     ->label('Start Date')
                     ->formatStateUsing(function ($state) {
@@ -90,25 +104,116 @@ class ScheduleResource extends Resource
                         'waiting_admin_approval' => 'gray',
                         'date_not_set' => 'danger',
                         'ready' => 'success',
+                        'waiting_signature' => 'warning',
+                        'complete' => 'success',
                         default => 'gray',
                     })
                     ->sortable()
                     ->searchable()
                     ->formatStateUsing(fn(string $state): string => str_replace('_', ' ', ucfirst($state))),
-                // Tables\Columns\TextColumn::make('instructor_approval')
-                //     ->label('Instructor Approval')
-                //     ->badge()
-                //     ->color(fn($state) => $state ? 'success' : 'danger')
-                //     ->formatStateUsing(fn($state) => $state ? 'OK' : 'Pending'),
-                // Tables\Columns\TextColumn::make('admin_approval')
-                //     ->label('Admin Approval')
-                //     ->badge()
-                //     ->color(fn($state) => $state ? 'success' : 'danger')
-                //     ->formatStateUsing(fn($state) => $state ? 'OK' : 'Pending'),
+                Tables\Columns\IconColumn::make('att_student')
+                    ->label('Student Signature')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger'),
+                Tables\Columns\IconColumn::make('att_instructor')
+                    ->label('Instructor Signature')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger'),
+
             ])
             ->actions([
+                // View action for showing schedule details
+                Tables\Actions\ViewAction::make()
+                    ->modalHeading(fn(Schedule $record) => 'Driving Schedule #' . $record->id)
+                    ->icon('heroicon-o-eye')
+                    ->iconButton()
+                    ->tooltip('View Details')
+                    ->modalWidth('xl')
+                    ->extraModalFooterActions(fn() => [])
+                    ->modalContent(function (Schedule $record) {
+                        return view('filament.student.resources.schedule.view', [
+                            'record' => $record
+                        ]);
+                    })->modalActions([
+                        Tables\Actions\Action::make('add_signature_modal')
+                            ->label('')
+                            ->icon('heroicon-o-pencil')
+                            ->color('success')
+                            ->tooltip('Add Signature')
+                            ->visible(fn(Schedule $record) => $record->status === 'waiting_signature' && $record->att_student != 1)
+                            ->requiresConfirmation()
+                            ->modalHeading('Confirm Signature')
+                            ->modalDescription('By adding your signature, you confirm that you attended this driving session. This cannot be undone.')
+                            ->modalSubmitActionLabel('Confirm Signature')
+                            ->action(function (Schedule $record) {
+                                // Since we're in the Student namespace, update att_student to 1
+                                $updateData = ['att_student' => 1];
+
+                                // Check if instructor has already signed (att_instructor = 1)
+                                if ($record->att_instructor == 1) {
+                                    // Both student and instructor have signed, mark as complete
+                                    $updateData['status'] = 'complete';
+                                }
+
+                                $record->update($updateData);
+
+                                // Check if the session is now complete
+                                if (isset($updateData['status']) && $updateData['status'] === 'complete') {
+                                    // Check if all schedules for this student course are complete
+                                    $studentCourseId = $record->student_course_id;
+
+                                    // Count total schedules for this course
+                                    $totalSchedules = Schedule::where('student_course_id', $studentCourseId)->count();
+
+                                    // Count completed schedules
+                                    $completedSchedules = Schedule::where('student_course_id', $studentCourseId)
+                                        ->where('status', 'complete')
+                                        ->count();
+
+                                    // If all schedules are complete, update the student_course status to 'done'
+                                    if ($totalSchedules === $completedSchedules) {
+                                        \App\Models\StudentCourse::where('id', $studentCourseId)
+                                            ->update(['status' => 'done']);
+
+                                        \Illuminate\Support\Facades\Log::info(
+                                            'Updated student course status to done - all schedules complete',
+                                            ['student_course_id' => $studentCourseId]
+                                        );
+
+                                        \Filament\Notifications\Notification::make()
+                                            ->title('Course Completed')
+                                            ->body('Congratulations! You have completed all sessions for this course.')
+                                            ->success()
+                                            ->send();
+                                    } else {
+                                        \Filament\Notifications\Notification::make()
+                                            ->title('Session Completed')
+                                            ->body('Both you and the instructor have signed. The session is now complete.')
+                                            ->success()
+                                            ->send();
+                                    }
+                                } else {
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('Signature Confirmed')
+                                        ->body('Your signature has been added. Waiting for instructor signature to complete the session.')
+                                        ->success()
+                                        ->send();
+                                }
+                            }),
+                    ]),
+
                 Tables\Actions\EditAction::make()
-                    ->label(fn(Schedule $record) => $record->start_date === null ? 'Set Date' : 'Reschedule')
+                    ->label('')
+                    ->tooltip(fn(Schedule $record) => $record->start_date === null ? 'Set Date' : 'Reschedule')
+                    ->icon('heroicon-o-calendar')
+                    ->iconButton()
+                    ->visible(fn(Schedule $record) => !in_array($record->status, ['complete', 'waiting_signature']))
                     ->form([
                         Forms\Components\DateTimePicker::make('start_date')
                             ->label('Start Date')
@@ -119,6 +224,15 @@ class ScheduleResource extends Resource
                             ->validationMessages([
                                 'min' => 'The date must be at least 1 day from now.',
                             ]),
+                        Forms\Components\Select::make('instructor_id')
+                            ->label('Instructor')
+                            ->options(function () {
+                                return \App\Models\Instructor::all()->pluck('name', 'id');
+                            })
+                            ->searchable()
+                            ->preload()
+                            ->default(fn(Schedule $record) => $record->instructor_id)
+                            ->helperText('Choose an instructor for this session'),
                         Forms\Components\Select::make('car_id')
                             ->label('Car')
                             ->options(function (Schedule $record) {
@@ -137,7 +251,7 @@ class ScheduleResource extends Resource
                             ->helperText('Optional. Only showing cars compatible with this course')
                     ])
                     ->requiresConfirmation()
-                    ->modalDescription('After submitting a new date, you will need to wait for both instructor and admin approval before the schedule is confirmed.')
+                    ->modalDescription('Please confirm the schedule details before submitting.')
                     ->modalSubmitActionLabel('Submit Schedule')
                     ->successNotification(null) // Disable the default success notification
                     ->afterFormFilled(function (array $data) {
@@ -160,8 +274,8 @@ class ScheduleResource extends Resource
                         // Perform all validations first before deciding what to do
                         $validationErrors = [];
 
-                        // Check if the instructor is available
-                        $instructorId = $record->studentCourse->instructor_id;
+                        // Get the instructor ID from the form if provided, otherwise use the one from student course
+                        $instructorId = $data['instructor_id'] ?? $record->studentCourse->instructor_id;
 
                         // Check session order validation
                         // If current session is greater than 1, check that all previous sessions are scheduled
@@ -196,9 +310,7 @@ class ScheduleResource extends Resource
                         $instructorConflict = Schedule::query()
                             ->where('id', '!=', $record->id)
                             ->whereNotNull('start_date')
-                            ->whereHas('studentCourse', function ($query) use ($instructorId) {
-                                $query->where('instructor_id', $instructorId);
-                            })
+                            ->where('instructor_id', $instructorId)
                             ->where(function ($query) use ($startWindow, $endWindow, $startDateCarbon) {
                                 // A schedule conflicts if:
                                 // 1. It starts within our window
@@ -213,7 +325,9 @@ class ScheduleResource extends Resource
 
                         // Instructor availability validation
                         if ($instructorConflict) {
-                            $instructorName = $record->studentCourse->instructor->name ?? "Your instructor";
+                            $instructorName = isset($data['instructor_id']) ?
+                                Instructor::find($data['instructor_id'])->name ?? "Selected instructor" :
+                                $record->studentCourse->instructor->name ?? "Your instructor";
                             $validationErrors[] = [
                                 'title' => 'Instructor Not Available',
                                 'message' => "{$instructorName} is already scheduled within 3 hours of your requested time. Please select a different time."
@@ -300,22 +414,26 @@ class ScheduleResource extends Resource
 
                         // If all validations pass, then proceed with update
                         try {
+                            // Use the instructor_id from the form if provided, otherwise use the one from student course
+                            $instructorId = $data['instructor_id'] ?? $record->studentCourse->instructor_id;
+
+                            // Check if instructor was changed (for notification purposes only)
+                            $instructorChanged = isset($data['instructor_id']) && $data['instructor_id'] != $record->instructor_id;
+
                             $record->update([
                                 'start_date' => $data['start_date'],
                                 'car_id' => $data['car_id'],
-                                'instructor_approval' => 1,
-                                'admin_approval' => 1,
-                                'status' => 'ready',
+                                'instructor_approval' => 1, // Always approved
+                                'admin_approval' => 1,      // Always approved
+                                'status' => 'ready',        // Always ready
+                                'instructor_id' => $instructorId,
                             ]);
 
-                            // Check all schedules for this student_course_id to see if any are waiting for approval
+                            // Get the student course ID for this schedule
                             $studentCourseId = $record->student_course_id;
+                            // Since we're not using approval statuses, just check for date_not_set status
                             $hasWaitingSchedules = Schedule::where('student_course_id', $studentCourseId)
-                                ->whereIn('status', [
-                                    'waiting_approval',
-                                    'waiting_instructor_approval',
-                                    'waiting_admin_approval'
-                                ])
+                                ->where('status', 'date_not_set')
                                 ->exists();
 
                             // If any schedules are waiting for approval, update the student_course status
@@ -333,9 +451,14 @@ class ScheduleResource extends Resource
                             $record->refresh();
 
                             // Show a success notification
+                            $instructorName = $instructorChanged ?
+                                Instructor::find($instructorId)->name ?? 'new instructor' : null;
+
                             \Filament\Notifications\Notification::make()
                                 ->title('Schedule Updated')
-                                ->body('Your schedule has been submitted and is awaiting approval.')
+                                ->body($instructorChanged
+                                    ? "Your schedule has been updated with instructor {$instructorName}."
+                                    : 'Your schedule has been updated successfully.')
                                 ->success()
                                 ->send();
 
@@ -353,6 +476,85 @@ class ScheduleResource extends Resource
                                 ->send();
 
                             return false;
+                        }
+                    }),
+
+                // Add Signature button
+                Tables\Actions\Action::make('add_signature')
+                    ->label('')
+                    ->icon('heroicon-o-pencil')
+                    ->iconButton()
+                    ->color('success')
+                    ->tooltip('Add Signature')
+                    ->visible(fn(Schedule $record) => $record->status === 'waiting_signature')
+                    ->requiresConfirmation()
+                    ->modalHeading('Confirm Signature')
+                    ->modalDescription('By adding your signature, you confirm that you attended this driving session. This cannot be undone.')
+                    ->modalSubmitActionLabel('Confirm Signature')
+                    ->action(function (Schedule $record) {
+                        try {
+                            // Since we're in the Student namespace, update att_student to 1
+                            $updateData = ['att_student' => 1];
+
+                            // Check if instructor has already signed (att_instructor = 1)
+                            if ($record->att_instructor == 1) {
+                                // Both student and instructor have signed, mark as complete
+                                $updateData['status'] = 'complete';
+                            }
+
+                            $record->update($updateData);
+
+                            // Check if the session is now complete
+                            if (isset($updateData['status']) && $updateData['status'] === 'complete') {
+                                // Check if all schedules for this student course are complete
+                                $studentCourseId = $record->student_course_id;
+
+                                // Count total schedules for this course
+                                $totalSchedules = Schedule::where('student_course_id', $studentCourseId)->count();
+
+                                // Count completed schedules
+                                $completedSchedules = Schedule::where('student_course_id', $studentCourseId)
+                                    ->where('status', 'complete')
+                                    ->count();
+
+                                // If all schedules are complete, update the student_course status to 'done'
+                                if ($totalSchedules === $completedSchedules) {
+                                    \App\Models\StudentCourse::where('id', $studentCourseId)
+                                        ->update(['status' => 'done']);
+
+                                    \Illuminate\Support\Facades\Log::info(
+                                        'Updated student course status to done - all schedules complete',
+                                        ['student_course_id' => $studentCourseId]
+                                    );
+
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('Course Completed')
+                                        ->body('Congratulations! You have completed all sessions for this course.')
+                                        ->success()
+                                        ->send();
+                                } else {
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('Session Completed')
+                                        ->body('Both you and the instructor have signed. The session is now complete.')
+                                        ->success()
+                                        ->send();
+                                }
+                            } else {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Signature Confirmed')
+                                    ->body('Your signature has been added. Waiting for instructor signature to complete the session.')
+                                    ->success()
+                                    ->send();
+                            }
+                        } catch (\Exception $e) {
+                            \Illuminate\Support\Facades\Log::error('Failed to add signature: ' . $e->getMessage());
+
+                            \Filament\Notifications\Notification::make()
+                                ->title('Failed to Add Signature')
+                                ->body('An error occurred. Please try again later.')
+                                ->danger()
+                                ->persistent()
+                                ->send();
                         }
                     }),
             ])
