@@ -51,7 +51,6 @@ class StudentPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Student/Widgets'), for: 'App\\Filament\\Student\\Widgets')
             ->widgets([
-
                 ScheduleOverview::class,
             ])
             ->darkMode(false)
