@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.6.0](https://github.com/ibobdb/natunajaya/compare/v1.5.3...v1.6.0) (2025-06-12)
+
+
+### Features
+
+* add SalesOverview widget with date range filtering and sales statistics ([3e32a02](https://github.com/ibobdb/natunajaya/commit/3e32a02826ac589cef44b24b109baeff6b4d2ea1))
+* **car:** add last KIR check date field to Car resource ([120c3c2](https://github.com/ibobdb/natunajaya/commit/120c3c259cae7bb612d75ecde02c0c050bc784ac))
+* **schedule:** add instructor assignment and attendance tracking ([9d0b3c3](https://github.com/ibobdb/natunajaya/commit/9d0b3c3bdb8b663fa0f8951108381fa63cf1c1da))
+* **schedule:** enhance schedule management with detailed view and instructor stats ([05821d8](https://github.com/ibobdb/natunajaya/commit/05821d8fbc824f048a82df49e7ce2c8957efc306))
+* **testimoni:** add testimony feature with submission and display functionality ([7160b52](https://github.com/ibobdb/natunajaya/commit/7160b5299f6cbeff8a7431924006aececaf26771))
+
+
+### Bug Fixes
+
+* **welcome:** update operational hours for Sunday and public holidays ([a56f5ee](https://github.com/ibobdb/natunajaya/commit/a56f5ee2f9f158f130b6c77a62f894ce572bd88d))
+
 ## [1.5.3](https://github.com/ibobdb/natunajaya/compare/v1.5.2...v1.5.3) (2025-06-06)
 
 
