@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.3](https://github.com/ibobdb/natunajaya/compare/v1.5.2...v1.5.3) (2025-06-06)
+
+
+### Code Refactoring
+
+* **dashboard:** remove unused footer widget and clean up header widget ([2b72bf5](https://github.com/ibobdb/natunajaya/commit/2b72bf53639e2d7362f71b6e6eeb02e07d215f9e))
+* **schedule:** update approval logic and remove unused columns ([a148377](https://github.com/ibobdb/natunajaya/commit/a148377cf9a4233e8a7f704247634704db8eee05))
+
 ## [1.5.2](https://github.com/ibobdb/natunajaya/compare/v1.5.1...v1.5.2) (2025-06-06)
 
 
