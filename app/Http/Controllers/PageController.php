@@ -16,9 +16,28 @@ class PageController extends Controller
         $data = [
             'courses' => $this->getCourses(),
             'cars' => $this->getCars(),
+            'testimonials' => $this->getTestimonials(),
         ];
 
         return view('welcome', $data);
+    }
+
+    private function getTestimonials()
+    {
+        try {
+            // Get the last 3 active testimonials with user information
+            $testimonials = \App\Models\Testimoni::where('is_active', true)
+                ->with('user')
+                ->orderBy('created_at', 'desc')
+                ->take(3)
+                ->get();
+
+            return $testimonials;
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error('Error fetching testimonials: ' . $e->getMessage());
+            return collect(); // Return empty collection if there's an error
+        }
     }
 
     private function getCourses()

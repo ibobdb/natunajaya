@@ -6,6 +6,7 @@ use App\Filament\Student\Resources\CourseResource\Pages;
 use App\Filament\Student\Resources\CourseResource\RelationManagers;
 use App\Models\Course;
 use App\Models\StudentCourse;
+use App\Models\Testimoni;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,6 +14,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 
 class CourseResource extends Resource
 {
@@ -113,6 +117,72 @@ class CourseResource extends Resource
                     ->modalCancelAction(false)
                     ->action(function (StudentCourse $record) {
                         return redirect()->route('filament.student.resources.schedules.index');
+                    }),
+
+                Tables\Actions\Action::make('create_testimony')
+                    ->label('Leave Testimony')
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->color('success')
+                    ->visible(function () {
+                        // Check if user already created a testimony
+                        $user = auth()->user();
+                        if ($user->isTestimoni === 1) {
+                            return false;
+                        }
+
+                        // Check if user has at least one completed course
+                        $hasCompletedCourse = StudentCourse::whereHas('student', function (Builder $query) {
+                            $query->where('user_id', auth()->id());
+                        })
+                            ->where('status', 'done')
+                            ->exists();
+
+                        return $hasCompletedCourse;
+                    })
+                    ->form([
+                        Textarea::make('content')
+                            ->label('Your Testimony')
+                            ->required()
+                            ->minLength(10)
+                            ->maxLength(500),
+                        Select::make('rating')
+                            ->label('Rating')
+                            ->required()
+                            ->options([
+                                1 => '⭐ Poor',
+                                2 => '⭐⭐ Fair',
+                                3 => '⭐⭐⭐ Good',
+                                4 => '⭐⭐⭐⭐ Very Good',
+                                5 => '⭐⭐⭐⭐⭐ Excellent'
+                            ])
+                    ])
+                    ->action(function (array $data) {
+                        $user = auth()->user();
+
+                        // Double check if user hasn't created a testimony yet
+                        if ($user->isTestimoni === 1) {
+                            Notification::make()
+                                ->title('You have already submitted a testimony')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+
+                        // Create testimony
+                        Testimoni::create([
+                            'user_id' => $user->id,
+                            'content' => $data['content'],
+                            'rating' => $data['rating'],
+                            'is_active' => true,
+                        ]);
+
+                        // Update user isTestimoni flag
+                        $user->update(['isTestimoni' => 1]);
+
+                        Notification::make()
+                            ->title('Testimony submitted successfully')
+                            ->success()
+                            ->send();
                     }),
             ])
             ->bulkActions([

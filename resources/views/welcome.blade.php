@@ -851,7 +851,45 @@
 			</div>
 
 			<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-				<!-- Testimonial 1 -->
+				@forelse($testimonials as $testimonial)
+				<!-- Dynamic Testimonial -->
+				<div class="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+					<div class="flex items-center mb-4">
+						<div class="h-12 w-12 rounded-full bg-blue-100 overflow-hidden">
+							@if ($testimonial->user && $testimonial->user->profile_photo_path)
+							<img src="{{ Storage::url($testimonial->user->profile_photo_path) }}" alt="Testimonial"
+								class="h-full w-full object-cover" />
+							@else
+							<div
+								class="h-full w-full flex items-center justify-center bg-blue-500 text-white font-bold text-xl">
+								{{ $testimonial->user ? substr($testimonial->user->name, 0, 1) : 'U' }}
+							</div>
+							@endif
+						</div>
+						<div class="ml-4">
+							<h4 class="font-semibold text-lg">
+								{{ $testimonial->user ? $testimonial->user->name : 'Anonymous' }}</h4>
+							<p class="text-gray-600 text-sm">Siswa
+								{{ $testimonial->user && $testimonial->user->student ? 'SIM ' . $testimonial->user->student->license_type : 'Kursus' }}
+							</p>
+						</div>
+					</div>
+					<div class="flex mb-3">
+						@for($i = 1; $i <= 5; $i++) <svg
+							class="w-5 h-5 {{ $i <= $testimonial->rating ? 'text-yellow-400' : 'text-gray-300' }}"
+							fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+							<path
+								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+							</path>
+							</svg>
+							@endfor
+					</div>
+					<p class="text-gray-700 italic">
+						"{{ $testimonial->content }}"
+					</p>
+				</div>
+				@empty
+				<!-- Fallback Testimonials if no records found -->
 				<div class="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
 					<div class="flex items-center mb-4">
 						<div class="h-12 w-12 rounded-full bg-blue-100 overflow-hidden">
@@ -864,30 +902,14 @@
 						</div>
 					</div>
 					<div class="flex mb-3">
-						<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg">
+						@for($i = 1; $i <= 5; $i++) <svg
+							class="w-5 h-5 {{ $i <= 4 ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor"
+							viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
 							<path
 								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
 							</path>
-						</svg>
-						<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg">
-							<path
-								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-							</path>
-						</svg>
-						<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg">
-							<path
-								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-							</path>
-						</svg>
-						<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg">
-							<path
-								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-							</path>
-						</svg>
+							</svg>
+							@endfor
 					</div>
 					<p class="text-gray-700 italic">
 						"Saya sangat puas dengan kursus mengemudi di Natuna. Instruktur sangat sabar dan profesional.
@@ -909,30 +931,14 @@
 						</div>
 					</div>
 					<div class="flex mb-3">
-						<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg">
+						@for($i = 1; $i <= 5; $i++) <svg
+							class="w-5 h-5 {{ $i <= 4 ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor"
+							viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
 							<path
 								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
 							</path>
-						</svg>
-						<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg">
-							<path
-								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-							</path>
-						</svg>
-						<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg">
-							<path
-								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-							</path>
-						</svg>
-						<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg">
-							<path
-								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-							</path>
-						</svg>
+							</svg>
+							@endfor
 					</div>
 					<p class="text-gray-700 italic">
 						"Fasilitas dan kendaraan untuk latihan sangat bagus dan terawat. Instrukturnya juga sangat
@@ -953,36 +959,21 @@
 						</div>
 					</div>
 					<div class="flex mb-3">
-						<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg">
+						@for($i = 1; $i <= 5; $i++) <svg
+							class="w-5 h-5 {{ $i <= 4 ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor"
+							viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
 							<path
 								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
 							</path>
-						</svg>
-						<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg">
-							<path
-								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-							</path>
-						</svg>
-						<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg">
-							<path
-								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-							</path>
-						</svg>
-						<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg">
-							<path
-								d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-							</path>
-						</svg>
+							</svg>
+							@endfor
 					</div>
 					<p class="text-gray-700 italic">
 						"Saya mengambil paket profesional dan sangat terkesan dengan metode pengajaran yang
 						komprehensif. Sekarang saya lebih percaya diri mengemudi di segala kondisi jalan dan cuaca."
 					</p>
 				</div>
+				@endforelse
 			</div>
 
 			<div class="mt-12 text-center">

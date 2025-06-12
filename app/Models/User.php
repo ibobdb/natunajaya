@@ -38,6 +38,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'isTestimoni',
         'role',
     ];
 
@@ -80,5 +81,13 @@ class User extends Authenticatable implements FilamentUser
     public function student()
     {
         return $this->hasOne(Student::class);
+    }
+
+    /**
+     * Get the testimonials associated with the user.
+     */
+    public function testimonials()
+    {
+        return $this->hasMany(Testimoni::class);
     }
 }
