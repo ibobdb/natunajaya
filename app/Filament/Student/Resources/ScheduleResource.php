@@ -81,6 +81,7 @@ class ScheduleResource extends Resource
                     ->label('Course Name')
                     ->searchable()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('for_session')
                     ->label('Session')
                     ->numeric()
