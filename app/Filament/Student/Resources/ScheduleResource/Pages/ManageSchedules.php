@@ -5,12 +5,15 @@ namespace App\Filament\Student\Resources\ScheduleResource\Pages;
 use App\Filament\Student\Resources\ScheduleResource;
 use App\Models\Schedule;
 use App\Models\Instructor;
+use App\Models\Student;
+use App\Http\Controllers\WhatsappController;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Tables\Actions\EditAction;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class ManageSchedules extends ManageRecords
 {
@@ -23,6 +26,75 @@ class ManageSchedules extends ManageRecords
 
 
         ];
+    }
+
+    /**
+     * Send WhatsApp notification for schedule update
+     * 
+     * @param \App\Models\Schedule $schedule
+     * @return void
+     */
+    protected function sendScheduleUpdateNotification(Schedule $schedule)
+    {
+        try {
+            // Try to get the student directly from the schedule
+            $student = null;
+
+            // First, try to get the student using our new accessor attribute
+            if ($schedule->student) {
+                $student = $schedule->student;
+                Log::info("Found student from schedule's student attribute", [
+                    'student_id' => $student->id,
+                    'schedule_id' => $schedule->id
+                ]);
+            }
+
+            // If we couldn't find a student that way, try the authenticated user
+            if (!$student) {
+                $user = auth()->user();
+                if (!$user) {
+                    Log::error("Cannot send WhatsApp notification: No authenticated user and could not find student from schedule");
+                    return;
+                }
+
+                $student = $user->student;
+                if (!$student) {
+                    Log::error("Cannot send WhatsApp notification: User {$user->id} has no student record");
+                    return;
+                }
+            }
+
+            // Debug info
+            Log::info("Debug: Preparing to send WhatsApp notification", [
+                'user_id' => $student->user->id ?? 'unknown',
+                'student_id' => $student->id,
+                'schedule_id' => $schedule->id,
+                'user_has_phone' => !empty($student->user->phone),
+                'phone' => $student->user->phone ?? 'Not set'
+            ]);
+
+            // Check if student's user has a phone number
+            if (empty($student->user->phone)) {
+                Log::warning("Cannot send WhatsApp notification: Student {$student->id} has no phone number");
+                return;
+            }
+
+            // Use WhatsappController to send schedule update
+            $whatsappController = new WhatsappController();
+            $result = $whatsappController->sendScheduleUpdateNotification($student, $schedule);
+
+            Log::info("WhatsApp schedule update notification sent", [
+                'user_id' => $student->user->id ?? 'unknown',
+                'student_id' => $student->id,
+                'phone' => $student->user->phone,
+                'schedule_id' => $schedule->id,
+                'result' => $result
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Error sending WhatsApp notification: " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
     }
 
     protected function getTableActions(): array
@@ -67,6 +139,19 @@ class ManageSchedules extends ManageRecords
                     $instructorName = $instructorChanged
                         ? Instructor::find($data['instructor_id'])->name ?? 'New instructor'
                         : null;
+
+                    // Get the updated schedule to ensure we have the latest data
+                    $updatedRecord = Schedule::find($record->id);
+
+                    // Send WhatsApp notification about schedule change
+                    Log::info("About to call sendScheduleUpdateNotification", [
+                        'schedule_id' => $updatedRecord->id,
+                        'authenticated_user_id' => auth()->id(),
+                        'authenticated_user_type' => auth()->user() ? get_class(auth()->user()) : 'null',
+                        'has_student' => auth()->user() && auth()->user()->student ? true : false
+                    ]);
+
+                    $this->sendScheduleUpdateNotification($updatedRecord);
 
                     Notification::make()
                         ->title('Schedule updated')

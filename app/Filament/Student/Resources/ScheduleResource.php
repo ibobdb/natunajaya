@@ -462,6 +462,37 @@ class ScheduleResource extends Resource
                                 ->success()
                                 ->send();
 
+                            // Send WhatsApp notification about the schedule update
+                            try {
+                                // Get the updated schedule with fresh data
+                                $record->refresh();
+
+                                // Get the student associated with this schedule
+                                $student = $record->student;
+
+                                if ($student) {
+                                    // Send WhatsApp notification
+                                    $whatsappController = new \App\Http\Controllers\WhatsappController();
+                                    $result = $whatsappController->sendScheduleUpdateNotification($student, $record);
+
+                                    \Illuminate\Support\Facades\Log::info('WhatsApp schedule notification sent from ScheduleResource', [
+                                        'student_id' => $student->id,
+                                        'schedule_id' => $record->id,
+                                        'result' => $result
+                                    ]);
+                                } else {
+                                    \Illuminate\Support\Facades\Log::warning('Could not send WhatsApp notification - No student found for schedule', [
+                                        'schedule_id' => $record->id
+                                    ]);
+                                }
+                            } catch (\Exception $e) {
+                                \Illuminate\Support\Facades\Log::error('Error sending WhatsApp notification from ScheduleResource', [
+                                    'schedule_id' => $record->id,
+                                    'error' => $e->getMessage()
+                                ]);
+                                // Don't show error to user, just log it
+                            }
+
                             return $record;
                         } catch (\Exception $e) {
                             // Log the error

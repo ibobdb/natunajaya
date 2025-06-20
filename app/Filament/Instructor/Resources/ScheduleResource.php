@@ -6,6 +6,7 @@ use App\Filament\Instructor\Resources\ScheduleResource\Pages;
 use App\Filament\Instructor\Resources\ScheduleResource\RelationManagers;
 use App\Models\Schedule;
 use App\Models\Instructor;
+use App\Http\Controllers\WhatsappController;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,6 +15,7 @@ use Filament\Tables\Table;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Log;
 
 class ScheduleResource extends Resource
 {
@@ -24,6 +26,68 @@ class ScheduleResource extends Resource
     protected static ?string $modelLabel = 'Driving Schedule';
     protected static ?string $pluralModelLabel = 'Driving Schedules';
     protected static ?int $navigationSort = 10;
+
+    /**
+     * Send WhatsApp notification for schedule update
+     * 
+     * @param \App\Models\Schedule $schedule
+     * @return void
+     */
+    protected static function sendScheduleUpdateNotification(Schedule $schedule)
+    {
+        try {
+            // Try to get the student directly from the schedule
+            $student = null;
+
+            // First, try to get the student using the accessor attribute
+            if ($schedule->student) {
+                $student = $schedule->student;
+                Log::info("Found student from schedule's student attribute", [
+                    'student_id' => $student->id,
+                    'schedule_id' => $schedule->id
+                ]);
+            }
+
+            // If we couldn't find a student that way, try to get through studentCourse
+            if (!$student && $schedule->studentCourse && $schedule->studentCourse->student) {
+                $student = $schedule->studentCourse->student;
+                Log::info("Found student from studentCourse relationship", [
+                    'student_id' => $student->id,
+                    'schedule_id' => $schedule->id
+                ]);
+            }
+
+            if (!$student) {
+                Log::error("Cannot send WhatsApp notification: Could not find student from schedule", [
+                    'schedule_id' => $schedule->id
+                ]);
+                return;
+            }
+
+            // Check if student's user has a phone number
+            if (empty($student->user->phone)) {
+                Log::warning("Cannot send WhatsApp notification: Student {$student->id} has no phone number");
+                return;
+            }
+
+            // Use WhatsappController to send schedule update
+            $whatsappController = new WhatsappController();
+            $result = $whatsappController->sendScheduleUpdateNotification($student, $schedule);
+
+            Log::info("WhatsApp schedule update notification sent from instructor side", [
+                'user_id' => $student->user->id ?? 'unknown',
+                'student_id' => $student->id,
+                'phone' => $student->user->phone,
+                'schedule_id' => $schedule->id,
+                'result' => $result
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error sending WhatsApp notification from instructor side: " . $e->getMessage(), [
+                'schedule_id' => $schedule->id,
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+    }
 
     public static function form(Form $form): Form
     {
@@ -129,6 +193,14 @@ class ScheduleResource extends Resource
 
                                 $record->update($updateData);
 
+                                // Refresh the record to get updated data
+                                $record->refresh();
+
+                                // Send WhatsApp notification if schedule is completed
+                                if (isset($updateData['status']) && $updateData['status'] === 'complete') {
+                                    self::sendScheduleUpdateNotification($record);
+                                }
+
                                 // Check if the session is now complete
                                 if (isset($updateData['status']) && $updateData['status'] === 'complete') {
                                     // Check if all schedules for this student course are complete
@@ -190,6 +262,14 @@ class ScheduleResource extends Resource
                         }
 
                         $record->update($updateData);
+
+                        // Refresh the record to get updated data
+                        $record->refresh();
+
+                        // Send WhatsApp notification if schedule is completed
+                        if (isset($updateData['status']) && $updateData['status'] === 'complete') {
+                            self::sendScheduleUpdateNotification($record);
+                        }
 
                         // Check if the session is now complete
                         if (isset($updateData['status']) && $updateData['status'] === 'complete') {
