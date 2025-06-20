@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.0](https://github.com/ibobdb/natunajaya/compare/v1.6.0...v1.7.0) (2025-06-20)
+
+
+### Features
+
+* **dashboard:** add DashboardStatsOverview widget and remove SalesOverview ([ea36e1c](https://github.com/ibobdb/natunajaya/commit/ea36e1c2bfec88de1569691c0477880aa71a9211))
+* **testimonial:** implement testimonial slider component ([57a92b4](https://github.com/ibobdb/natunajaya/commit/57a92b44fb56457498973a46bd01dec417d8b63d))
+
 ## [1.6.0](https://github.com/ibobdb/natunajaya/compare/v1.5.3...v1.6.0) (2025-06-12)
 
 
