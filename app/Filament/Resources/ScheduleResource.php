@@ -19,6 +19,10 @@ class ScheduleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
+    protected static ?string $navigationLabel = 'Jadwal';
+
+    protected static ?string $modelLabel = 'Jadwal';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -26,15 +30,16 @@ class ScheduleResource extends Resource
                 Forms\Components\Select::make('student_course_id')
                     ->relationship('studentCourse', 'id')
                     ->getOptionLabelFromRecordUsing(fn($record) => $record->student->name)
-                    ->label('Student Name')
+                    ->label('Nama Siswa')
                     ->disabled()
                     ->required(),
                 Forms\Components\TextInput::make('for_session')
+                    ->label('Untuk Sesi')
                     ->disabled()
                     ->required()
                     ->numeric(),
                 Forms\Components\DateTimePicker::make('start_date')
-                    ->label('Set Schedule')
+                    ->label('Atur Jadwal')
                     ->required(),
 
             ]);
@@ -46,29 +51,33 @@ class ScheduleResource extends Resource
             ->defaultSort('start_date', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('studentCourse.student.name')
-                    ->label('Student Name')
+                    ->label('Nama Siswa')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('studentCourse.course.name')
-                    ->label('Course Name')
+                    ->label('Nama Kursus')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('studentCourse.instructor.name')
-                    ->label('Instructor Name')
+                    ->label('Nama Instruktur')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('for_session')
+                    ->label('Untuk Sesi')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
+                    ->label('Tanggal Mulai')
                     ->dateTime()
                     ->sortable(),
                 // Tables\Columns\TextColumn::make('duration_session'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -77,12 +86,12 @@ class ScheduleResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                // Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->label('Edit'),
+                // Tables\Actions\DeleteAction::make()->label('Hapus'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->label('Hapus Terpilih'),
                 ]),
             ]);
     }

@@ -22,30 +22,38 @@ class InstructorResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
+    protected static ?string $navigationLabel = 'Instruktur';
+
+    protected static ?string $modelLabel = 'Instruktur';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Instructor Information')
+                Forms\Components\Section::make('Informasi Instruktur')
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->label('Nama')
                             ->required()
                             ->maxLength(255),
                     ]),
 
-                Forms\Components\Section::make('User Account Information')
+                Forms\Components\Section::make('Informasi Akun Pengguna')
                     ->schema([
                         Forms\Components\TextInput::make('email')
+                            ->label('Email')
                             ->email()
                             ->required()
                             ->maxLength(255)
                             ->unique(table: User::class, column: 'email', ignoreRecord: true),
                         Forms\Components\TextInput::make('password')
+                            ->label('Kata Sandi')
                             ->password()
                             ->required(fn($context) => $context === 'create')
                             ->maxLength(255)
                             ->visibleOn('create'),
                         Forms\Components\TextInput::make('password_confirmation')
+                            ->label('Konfirmasi Kata Sandi')
                             ->password()
                             ->required(fn($context) => $context === 'create')
                             ->maxLength(255)
@@ -54,6 +62,7 @@ class InstructorResource extends Resource
                     ])->visibleOn('create'),
 
                 Forms\Components\Select::make('user_id')
+                    ->label('Pengguna')
                     ->relationship('user', 'name')
                     ->required()
                     ->visibleOn('edit'),
@@ -65,15 +74,19 @@ class InstructorResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
+                    ->label('Akun Pengguna')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -82,12 +95,12 @@ class InstructorResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->label('Edit'),
+                Tables\Actions\DeleteAction::make()->label('Hapus'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->label('Hapus Terpilih'),
                 ]),
             ]);
     }
