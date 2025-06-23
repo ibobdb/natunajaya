@@ -51,3 +51,38 @@ Route::get('/ping', function () {
 });
 
 require __DIR__ . '/auth.php';
+
+// Include WhatsApp API routes
+require __DIR__ . '/whatsapp.php';
+
+// Admin payment metrics routes
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/payment/metrics', [App\Http\Controllers\PaymentMetricsController::class, 'index'])
+        ->name('payment.metrics');
+    Route::get('/payment/notification-logs', [App\Http\Controllers\PaymentMetricsController::class, 'logs'])
+        ->name('payment.logs');
+    Route::post('/payment/{id}/resend-notification', [App\Http\Controllers\PaymentMetricsController::class, 'resendNotification'])
+        ->name('payment.resend');
+
+    // Test routes
+    Route::get('/payment/run-tests', function () {
+        return redirect()->route('admin.payment.metrics')
+            ->with('info', 'Test initiated in background. Check logs for results.');
+    })->name('payment.test');
+
+    Route::get('/whatsapp/status', function () {
+        $controller = new App\Http\Controllers\WhatsappController();
+        $url = $controller->getHealthCheckUrl();
+        $status = false;
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(5)->get($url);
+            $status = $response->successful();
+        } catch (\Exception $e) {
+            $status = false;
+        }
+
+        return redirect()->route('admin.payment.logs')
+            ->with($status ? 'success' : 'error', 'WhatsApp API is ' . ($status ? 'online' : 'offline'));
+    })->name('whatsapp.status');
+});

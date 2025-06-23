@@ -23,7 +23,7 @@ class CourseResource extends Resource
     protected static ?string $model = StudentCourse::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = 'My Courses';
+    protected static ?string $navigationLabel = 'Kursus Saya';
 
     protected static ?int $navigationSort = 10;
 
@@ -53,12 +53,13 @@ class CourseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('course.name')
+                    ->label('Nama Kursus')
                     ->searchable()
                     ->sortable()
                     ->limit(30),
 
                 Tables\Columns\TextColumn::make('course.session')
-                    ->label('Total Session')
+                    ->label('Semua Sesi')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
@@ -73,7 +74,7 @@ class CourseResource extends Resource
                     })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('upcoming_schedule')
-                    ->label('Next Schedule')
+                    ->label('Jadwal Selanjutnya')
                     ->state(function (StudentCourse $record) {
                         $upcomingSchedule = \App\Models\Schedule::where('student_course_id', $record->id)
                             ->where('start_date', '>', now())
@@ -82,12 +83,12 @@ class CourseResource extends Resource
 
                         return $upcomingSchedule ? $upcomingSchedule->start_date : null;
                     })
-                    ->date('M d, Y - H:i')
+                    ->date('d M Y - H:i')
                     ->badge()
                     ->color('success')
-                    ->placeholder('Not scheduled yet'),
+                    ->placeholder('Belum ada jadwal'),
                 Tables\Columns\TextColumn::make('instructor.name')
-                    ->label('Instructor')
+                    ->label('Instruktur')
                     ->searchable()
                     ->sortable()
                     ->limit(30),
@@ -100,7 +101,7 @@ class CourseResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('view_schedule')
-                    ->label('Schedule Details')
+                    ->label('Detail Jadwal')
                     ->icon('heroicon-o-calendar')
                     ->color('info')
                     ->modalHeading(fn(StudentCourse $record) => "Schedule for {$record->course->name}")
@@ -120,7 +121,7 @@ class CourseResource extends Resource
                     }),
 
                 Tables\Actions\Action::make('create_testimony')
-                    ->label('Leave Testimony')
+                    ->label('Buat Testimoni')
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->color('success')
                     ->visible(function () {
@@ -141,7 +142,7 @@ class CourseResource extends Resource
                     })
                     ->form([
                         Textarea::make('content')
-                            ->label('Your Testimony')
+                            ->label('Testimoni Anda')
                             ->required()
                             ->minLength(10)
                             ->maxLength(500),
@@ -162,7 +163,7 @@ class CourseResource extends Resource
                         // Double check if user hasn't created a testimony yet
                         if ($user->isTestimoni === 1) {
                             Notification::make()
-                                ->title('You have already submitted a testimony')
+                                ->title('Anda sudah pernah mengirimkan testimoni')
                                 ->danger()
                                 ->send();
                             return;
@@ -180,7 +181,7 @@ class CourseResource extends Resource
                         $user->update(['isTestimoni' => 1]);
 
                         Notification::make()
-                            ->title('Testimony submitted successfully')
+                            ->title('Testimoni berhasil dikirim')
                             ->success()
                             ->send();
                     }),

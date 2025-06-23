@@ -96,6 +96,14 @@ class MidtransCallbackController extends Controller
                     'to' => $newStatus
                 ]);
 
+                // Send WhatsApp notifications based on payment status changes
+                if ($newStatus !== $originalStatus) {
+                    $this->sendPaymentStatusNotification($order, $newStatus);
+
+                    // Also send admin notifications for any payment status change
+                    $this->sendAdminPaymentNotification($order, $newStatus);
+                }
+
                 // Create student course record first
                 $studentCourseId = null;
                 if (!empty($student_course)) {
@@ -195,6 +203,82 @@ class MidtransCallbackController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             return response()->json(['status' => 'error', 'message' => 'Internal server error'], 500);
+        }
+    }
+
+    /**
+     * Send WhatsApp notification based on payment status
+     *
+     * @param \App\Models\Order $order
+     * @param string $status
+     * @return void
+     */
+    private function sendPaymentStatusNotification($order, $status)
+    {
+        try {
+            // Get the user and student
+            $user = \App\Models\User::find($order->user_id);
+            if (!$user) {
+                Log::warning("Cannot send WhatsApp notification: User not found for order {$order->id}");
+                return;
+            }
+
+            $student = $user->student;
+            if (!$student) {
+                Log::warning("Cannot send WhatsApp notification: No student record for user {$user->id}");
+                return;
+            }
+
+            // Check if user has a phone number
+            if (empty($user->phone)) {
+                Log::warning("Cannot send WhatsApp notification: User {$user->id} has no phone number");
+                return;
+            }
+
+            // Use WhatsappController to send payment status notification
+            $whatsappController = new \App\Http\Controllers\WhatsappController();
+            $result = $whatsappController->sendPaymentStatusNotification($student, $order, $status);
+
+            Log::info("WhatsApp payment notification sent from callback controller", [
+                'order_id' => $order->id,
+                'user_id' => $user->id,
+                'phone' => $user->phone,
+                'status' => $status,
+                'result' => $result
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error sending WhatsApp notification from callback: " . $e->getMessage(), [
+                'order_id' => $order->id,
+                'status' => $status,
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+    }
+
+    /**
+     * Send WhatsApp notification to admin about payment status
+     *
+     * @param \App\Models\Order $order
+     * @param string $status
+     * @return void
+     */
+    private function sendAdminPaymentNotification($order, $status)
+    {
+        try {
+            $whatsappController = new \App\Http\Controllers\WhatsappController();
+            $result = $whatsappController->sendAdminPaymentNotification($order, $status);
+
+            Log::info("WhatsApp admin payment notification sent", [
+                'order_id' => $order->id,
+                'status' => $status,
+                'result' => $result
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error sending WhatsApp admin notification: " . $e->getMessage(), [
+                'order_id' => $order->id,
+                'status' => $status,
+                'trace' => $e->getTraceAsString()
+            ]);
         }
     }
 }

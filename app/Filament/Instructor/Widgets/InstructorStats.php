@@ -20,8 +20,8 @@ class InstructorStats extends BaseWidget
         if (!$user) {
             // User isn't logged in or session expired
             return [
-                Stat::make('Not Logged In', 'Please log in')
-                    ->description('Session may have expired')
+                Stat::make('Belum Masuk', 'Silakan masuk')
+                    ->description('Sesi mungkin telah berakhir')
                     ->color('danger'),
             ];
         }
@@ -31,8 +31,8 @@ class InstructorStats extends BaseWidget
 
         if (!$instructor) {
             return [
-                Stat::make('Instructor Error', 'Not connected')
-                    ->description('Your user account is not linked to an instructor profile')
+                Stat::make('Error Instruktur', 'Tidak terhubung')
+                    ->description('Akun pengguna Anda tidak terhubung ke profil instruktur')
                     ->color('danger'),
             ];
         }
@@ -57,23 +57,23 @@ class InstructorStats extends BaseWidget
             ->count();
 
         return [
-            Stat::make('Completed Sessions', $completedSchedulesCount)
-                ->description('Total completed driving sessions')
+            Stat::make('Sesi Selesai', $completedSchedulesCount)
+                ->description('Total sesi mengemudi yang selesai')
                 ->descriptionIcon('heroicon-o-check-circle')
                 ->color('success'),
 
-            Stat::make('Teaching Hours', $totalHours)
-                ->description('Total hours teaching (2hrs per session)')
+            Stat::make('Jam Mengajar', $totalHours)
+                ->description('Total jam mengajar (2 jam per sesi)')
                 ->descriptionIcon('heroicon-o-clock')
                 ->color('primary'),
 
-            Stat::make('Upcoming Sessions', $upcomingSchedulesCount)
-                ->description('Future scheduled sessions')
+            Stat::make('Sesi Mendatang', $upcomingSchedulesCount)
+                ->description('Sesi terjadwal di masa depan')
                 ->descriptionIcon('heroicon-o-calendar')
                 ->color('warning'),
 
-            Stat::make('Today\'s Sessions', $todaySchedulesCount)
-                ->description('Sessions scheduled for today')
+            Stat::make('Sesi Hari Ini', $todaySchedulesCount)
+                ->description('Sesi terjadwal untuk hari ini')
                 ->descriptionIcon('heroicon-o-calendar-days')
                 ->color('info'),
         ];

@@ -15,7 +15,7 @@ class ScheduleOverview extends BaseWidget
         $student = Auth::user();
         $today = Carbon::today();
 
-        // Get upcoming schedules for the current student using studentCourse relationship
+        // Dapatkan jadwal mendatang untuk siswa saat ini menggunakan relasi studentCourse
         $upcomingSchedules = Schedule::whereHas('studentCourse', function ($query) use ($student) {
             $query->where('student_id', $student->id);
         })
@@ -24,14 +24,14 @@ class ScheduleOverview extends BaseWidget
             ->limit(5)
             ->get();
 
-        // Get today's schedules
+        // Dapatkan jadwal hari ini
         $todaySchedules = Schedule::whereHas('studentCourse', function ($query) use ($student) {
             $query->where('student_id', $student->id);
         })
             ->whereDate('start_date', $today)
             ->count();
 
-        // Get this week's schedules
+        // Dapatkan jadwal minggu ini
         $weekStart = Carbon::today()->startOfWeek();
         $weekEnd = Carbon::today()->endOfWeek();
         $weekSchedules = Schedule::whereHas('studentCourse', function ($query) use ($student) {
@@ -40,24 +40,24 @@ class ScheduleOverview extends BaseWidget
             ->whereBetween('start_date', [$weekStart, $weekEnd])
             ->count();
 
-        // Create stats for display
+        // Buat statistik untuk ditampilkan
         $stats = [
-            Stat::make('Today\'s Classes', $todaySchedules)
-                ->description('Scheduled for today')
+            Stat::make('Kelas Hari Ini', $todaySchedules)
+                ->description('Terjadwal untuk hari ini')
                 ->descriptionIcon('heroicon-o-calendar')
                 ->color('success'),
 
-            Stat::make('This Week', $weekSchedules)
-                ->description('Classes this week')
+            Stat::make('Minggu Ini', $weekSchedules)
+                ->description('Kelas minggu ini')
                 ->descriptionIcon('heroicon-o-academic-cap')
                 ->color('info'),
         ];
 
-        // Add next upcoming schedule if available
+        // Tambahkan jadwal mendatang berikutnya jika tersedia
         if ($upcomingSchedules->count() > 0) {
             $nextClass = $upcomingSchedules->first();
-            // Use studentCourse to get the course name instead of subject
-            $stats[] = Stat::make('Next Class', $nextClass->studentCourse->course->name ?? 'Upcoming Class')
+            // Gunakan studentCourse untuk mendapatkan nama kursus daripada subjek
+            $stats[] = Stat::make('Kelas Berikutnya', $nextClass->studentCourse->course->name ?? 'Kelas Mendatang')
                 ->description(Carbon::parse($nextClass->start_date)->format('d M Y, H:i'))
                 ->descriptionIcon('heroicon-o-clock')
                 ->color('warning');

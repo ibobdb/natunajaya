@@ -19,11 +19,11 @@ class ScheduleResource extends Resource
     protected static ?string $model = Schedule::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?string $navigationLabel = 'My Schedules';
+    protected static ?string $navigationLabel = 'Jadwal Saya';
 
-    protected static ?string $modelLabel = 'Driving Schedule';
+    protected static ?string $modelLabel = 'Jadwal Mengemudi';
 
-    protected static ?string $pluralModelLabel = 'Driving Schedules';
+    protected static ?string $pluralModelLabel = 'Jadwal Mengemudi';
 
     protected static ?int $navigationSort = 10;
 
@@ -78,19 +78,19 @@ class ScheduleResource extends Resource
 
             ->columns([
                 Tables\Columns\TextColumn::make('studentCourse.course.name')
-                    ->label('Course Name')
+                    ->label('Nama Kursus')
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('for_session')
-                    ->label('Session')
+                    ->label('Sesi')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
-                    ->label('Start Date')
+                    ->label('Tanggal Mulai')
                     ->formatStateUsing(function ($state) {
                         if ($state === null || $state === '') {
-                            return 'Date not set';
+                            return 'Tanggal belum diatur';
                         }
                         return $state->format('M d, Y H:i');
                     })
@@ -113,14 +113,14 @@ class ScheduleResource extends Resource
                     ->searchable()
                     ->formatStateUsing(fn(string $state): string => str_replace('_', ' ', ucfirst($state))),
                 Tables\Columns\IconColumn::make('att_student')
-                    ->label('Student Signature')
+                    ->label('Tanda Tangan Siswa')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger'),
                 Tables\Columns\IconColumn::make('att_instructor')
-                    ->label('Instructor Signature')
+                    ->label('Tanda Tangan Instruktur')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
@@ -131,10 +131,10 @@ class ScheduleResource extends Resource
             ->actions([
                 // View action for showing schedule details
                 Tables\Actions\ViewAction::make()
-                    ->modalHeading(fn(Schedule $record) => 'Driving Schedule #' . $record->id)
+                    ->modalHeading(fn(Schedule $record) => 'Jadwal Mengemudi #' . $record->id)
                     ->icon('heroicon-o-eye')
                     ->iconButton()
-                    ->tooltip('View Details')
+                    ->tooltip('Lihat Detail')
                     ->modalWidth('xl')
                     ->extraModalFooterActions(fn() => [])
                     ->modalContent(function (Schedule $record) {
@@ -146,12 +146,12 @@ class ScheduleResource extends Resource
                             ->label('')
                             ->icon('heroicon-o-pencil')
                             ->color('success')
-                            ->tooltip('Add Signature')
+                            ->tooltip('Tanda Tangan')
                             ->visible(fn(Schedule $record) => $record->status === 'waiting_signature' && $record->att_student != 1)
                             ->requiresConfirmation()
-                            ->modalHeading('Confirm Signature')
-                            ->modalDescription('By adding your signature, you confirm that you attended this driving session. This cannot be undone.')
-                            ->modalSubmitActionLabel('Confirm Signature')
+                            ->modalHeading('Konfirmasi Tanda Tangan')
+                            ->modalDescription('Dengan menambahkan tanda tangan Anda, Anda mengonfirmasi bahwa Anda telah mengikuti sesi mengemudi ini. Tindakan ini tidak dapat dibatalkan.')
+                            ->modalSubmitActionLabel('Konfirmasi Tanda Tangan')
                             ->action(function (Schedule $record) {
                                 // Since we're in the Student namespace, update att_student to 1
                                 $updateData = ['att_student' => 1];
@@ -188,21 +188,21 @@ class ScheduleResource extends Resource
                                         );
 
                                         \Filament\Notifications\Notification::make()
-                                            ->title('Course Completed')
-                                            ->body('Congratulations! You have completed all sessions for this course.')
+                                            ->title('Kursus Selesai')
+                                            ->body('Selamat! Anda telah menyelesaikan semua sesi untuk kursus ini.')
                                             ->success()
                                             ->send();
                                     } else {
                                         \Filament\Notifications\Notification::make()
-                                            ->title('Session Completed')
-                                            ->body('Both you and the instructor have signed. The session is now complete.')
+                                            ->title('Sesi Selesai')
+                                            ->body('Anda dan instruktur telah menandatangani. Sesi sekarang telah selesai.')
                                             ->success()
                                             ->send();
                                     }
                                 } else {
                                     \Filament\Notifications\Notification::make()
-                                        ->title('Signature Confirmed')
-                                        ->body('Your signature has been added. Waiting for instructor signature to complete the session.')
+                                        ->title('Tanda Tangan Dikonfirmasi')
+                                        ->body('Tanda tangan Anda telah ditambahkan. Menunggu tanda tangan instruktur untuk menyelesaikan sesi.')
                                         ->success()
                                         ->send();
                                 }
@@ -217,25 +217,25 @@ class ScheduleResource extends Resource
                     ->visible(fn(Schedule $record) => !in_array($record->status, ['complete', 'waiting_signature']))
                     ->form([
                         Forms\Components\DateTimePicker::make('start_date')
-                            ->label('Start Date')
+                            ->label('Tanggal Mulai')
                             ->required()
                             ->minDate(now()->addDay())
                             // ->seconds(false)
-                            ->helperText('Please select a date at least 1 day from now.')
+                            ->helperText('Silakan pilih tanggal minimal 1 hari dari sekarang.')
                             ->validationMessages([
-                                'min' => 'The date must be at least 1 day from now.',
+                                'min' => 'Tanggal harus minimal 1 hari dari sekarang.',
                             ]),
                         Forms\Components\Select::make('instructor_id')
-                            ->label('Instructor')
+                            ->label('Instruktur')
                             ->options(function () {
                                 return \App\Models\Instructor::all()->pluck('name', 'id');
                             })
                             ->searchable()
                             ->preload()
                             ->default(fn(Schedule $record) => $record->instructor_id)
-                            ->helperText('Choose an instructor for this session'),
+                            ->helperText('Pilih instruktur untuk sesi ini'),
                         Forms\Components\Select::make('car_id')
-                            ->label('Car')
+                            ->label('Mobil')
                             ->options(function (Schedule $record) {
                                 return \App\Models\Car::whereIn('type', function ($query) use ($record) {
                                     $query->select('courses.default_car_type')
@@ -249,11 +249,11 @@ class ScheduleResource extends Resource
                             })
                             ->searchable()
                             ->preload()
-                            ->helperText('Optional. Only showing cars compatible with this course')
+                            ->helperText('Opsional. Hanya menampilkan mobil yang sesuai dengan kursus ini')
                     ])
                     ->requiresConfirmation()
-                    ->modalDescription('Please confirm the schedule details before submitting.')
-                    ->modalSubmitActionLabel('Submit Schedule')
+                    ->modalDescription('Silakan konfirmasi detail jadwal sebelum mengirim.')
+                    ->modalSubmitActionLabel('Simpan Jadwal')
                     ->successNotification(null) // Disable the default success notification
                     ->afterFormFilled(function (array $data) {
                         return $data;
@@ -292,16 +292,16 @@ class ScheduleResource extends Resource
                                 // Check if previous session has a start date
                                 if (!$previousSession->start_date) {
                                     $validationErrors[] = [
-                                        'title' => 'Session Order Error',
-                                        'message' => "You must schedule session #" . ($record->for_session - 1) . " before scheduling session #" . $record->for_session . "."
+                                        'title' => 'Perubahan Jadwal Tidak Valid',
+                                        'message' => "Anda harus menjadwalkan sesi #" . ($record->for_session - 1) . " sebelum menjadwalkan sesi #" . $record->for_session . "."
                                     ];
                                 }
                                 // Check if current session is being scheduled before the previous session
                                 else if ($startDateCarbon->lt($previousSession->start_date)) {
                                     $prevDate = $previousSession->start_date->format('M d, Y H:i');
                                     $validationErrors[] = [
-                                        'title' => 'Session Order Error',
-                                        'message' => "Session #" . $record->for_session . " cannot be scheduled before session #" . ($record->for_session - 1) . " ($prevDate)."
+                                        'title' => 'Perubahan Jadwal Tidak Valid',
+                                        'message' => "Sesi #" . $record->for_session . " tidak dapat dijadwalkan sebelum sesi #" . ($record->for_session - 1) . " ($prevDate)."
                                     ];
                                 }
                             }
@@ -327,11 +327,11 @@ class ScheduleResource extends Resource
                         // Instructor availability validation
                         if ($instructorConflict) {
                             $instructorName = isset($data['instructor_id']) ?
-                                Instructor::find($data['instructor_id'])->name ?? "Selected instructor" :
-                                $record->studentCourse->instructor->name ?? "Your instructor";
+                                Instructor::find($data['instructor_id'])->name ?? "Instruktur terpilih" :
+                                $record->studentCourse->instructor->name ?? "Instruktur Anda";
                             $validationErrors[] = [
-                                'title' => 'Instructor Not Available',
-                                'message' => "{$instructorName} is already scheduled within 3 hours of your requested time. Please select a different time."
+                                'title' => 'Instruktur Tidak Tersedia',
+                                'message' => "{$instructorName} sudah dijadwalkan dalam rentang 3 jam dari waktu yang Anda minta. Silakan pilih waktu yang berbeda."
                             ];
                         }
 
@@ -354,10 +354,10 @@ class ScheduleResource extends Resource
 
                         // Car availability validation
                         if ($conflictingSchedules) {
-                            $carName = \App\Models\Car::find($carId)->name ?? "Selected car";
+                            $carName = \App\Models\Car::find($carId)->name ?? "Mobil terpilih";
                             $validationErrors[] = [
-                                'title' => 'Car Not Available',
-                                'message' => "The selected car ($carName) is already booked within 3 hours of your requested time. Please select a different time or car."
+                                'title' => 'Mobil Tidak Tersedia',
+                                'message' => "Mobil yang dipilih ($carName) sudah dibooking dalam rentang 3 jam dari waktu yang Anda minta. Silakan pilih waktu atau mobil lain."
                             ];
                         }
 
@@ -384,8 +384,8 @@ class ScheduleResource extends Resource
                             $courseName = $record->studentCourse->course->name ?? "This course";
                             $formattedDate = $startDateCarbon->format('F j, Y');
                             $validationErrors[] = [
-                                'title' => 'Session Already Scheduled',
-                                'message' => "Session #{$sessionNumber} for \"{$courseName}\" is already scheduled on {$formattedDate}. Please choose a different date."
+                                'title' => 'Jadwal Sudah Ada',
+                                'message' => "Sesi #{$sessionNumber} untuk \"{$courseName}\" sudah dijadwalkan pada {$formattedDate}. Silakan pilih tanggal yang berbeda."
                             ];
                         }
 
@@ -403,8 +403,8 @@ class ScheduleResource extends Resource
                             if (count($validationErrors) > 1) {
                                 $additionalErrors = count($validationErrors) - 1;
                                 \Filament\Notifications\Notification::make()
-                                    ->title('Additional Issues Found')
-                                    ->body("There are {$additionalErrors} more validation issues. Please address all issues before submitting.")
+                                    ->title('Ditemukan Masalah Tambahan')
+                                    ->body("Terdapat {$additionalErrors} masalah validasi lainnya. Harap perbaiki semua masalah sebelum mengirimkan.")
                                     ->warning()
                                     ->send();
                             }
@@ -456,12 +456,43 @@ class ScheduleResource extends Resource
                                 Instructor::find($instructorId)->name ?? 'new instructor' : null;
 
                             \Filament\Notifications\Notification::make()
-                                ->title('Schedule Updated')
+                                ->title('Jadwal Diperbarui')
                                 ->body($instructorChanged
-                                    ? "Your schedule has been updated with instructor {$instructorName}."
-                                    : 'Your schedule has been updated successfully.')
+                                    ? "Jadwal Anda telah diperbarui dengan instruktur {$instructorName}."
+                                    : 'Jadwal Anda telah berhasil diperbarui.')
                                 ->success()
                                 ->send();
+
+                            // Send WhatsApp notification about the schedule update
+                            try {
+                                // Get the updated schedule with fresh data
+                                $record->refresh();
+
+                                // Get the student associated with this schedule
+                                $student = $record->student;
+
+                                if ($student) {
+                                    // Send WhatsApp notification
+                                    $whatsappController = new \App\Http\Controllers\WhatsappController();
+                                    $result = $whatsappController->sendScheduleUpdateNotification($student, $record);
+
+                                    \Illuminate\Support\Facades\Log::info('WhatsApp schedule notification sent from ScheduleResource', [
+                                        'student_id' => $student->id,
+                                        'schedule_id' => $record->id,
+                                        'result' => $result
+                                    ]);
+                                } else {
+                                    \Illuminate\Support\Facades\Log::warning('Could not send WhatsApp notification - No student found for schedule', [
+                                        'schedule_id' => $record->id
+                                    ]);
+                                }
+                            } catch (\Exception $e) {
+                                \Illuminate\Support\Facades\Log::error('Error sending WhatsApp notification from ScheduleResource', [
+                                    'schedule_id' => $record->id,
+                                    'error' => $e->getMessage()
+                                ]);
+                                // Don't show error to user, just log it
+                            }
 
                             return $record;
                         } catch (\Exception $e) {
@@ -470,8 +501,8 @@ class ScheduleResource extends Resource
 
                             // Show error notification
                             \Filament\Notifications\Notification::make()
-                                ->title('Update Failed')
-                                ->body('An error occurred while updating your schedule. Please try again later.')
+                                ->title('Gagal Diperbarui')
+                                ->body('Terjadi kesalahan saat memperbarui jadwal Anda. Silakan coba lagi nanti.')
                                 ->danger()
                                 ->persistent()
                                 ->send();
@@ -486,12 +517,12 @@ class ScheduleResource extends Resource
                     ->icon('heroicon-o-pencil')
                     ->iconButton()
                     ->color('success')
-                    ->tooltip('Add Signature')
+                    ->tooltip('Tambah Tanda Tangan')
                     ->visible(fn(Schedule $record) => $record->status === 'waiting_signature')
                     ->requiresConfirmation()
-                    ->modalHeading('Confirm Signature')
-                    ->modalDescription('By adding your signature, you confirm that you attended this driving session. This cannot be undone.')
-                    ->modalSubmitActionLabel('Confirm Signature')
+                    ->modalHeading('Konfirmasi Tanda Tangan')
+                    ->modalDescription('Dengan menambahkan tanda tangan Anda, Anda mengonfirmasi bahwa Anda telah mengikuti sesi mengemudi ini. Tindakan ini tidak dapat dibatalkan.')
+                    ->modalSubmitActionLabel('Konfirmasi Tanda Tangan')
                     ->action(function (Schedule $record) {
                         try {
                             // Since we're in the Student namespace, update att_student to 1
@@ -529,21 +560,21 @@ class ScheduleResource extends Resource
                                     );
 
                                     \Filament\Notifications\Notification::make()
-                                        ->title('Course Completed')
-                                        ->body('Congratulations! You have completed all sessions for this course.')
+                                        ->title('Kursus Selesai')
+                                        ->body('Selamat! Anda telah menyelesaikan semua sesi untuk kursus ini.')
                                         ->success()
                                         ->send();
                                 } else {
                                     \Filament\Notifications\Notification::make()
-                                        ->title('Session Completed')
-                                        ->body('Both you and the instructor have signed. The session is now complete.')
+                                        ->title('Sesi Selesai')
+                                        ->body('Anda dan instruktur telah menandatangani. Sesi sekarang telah selesai.')
                                         ->success()
                                         ->send();
                                 }
                             } else {
                                 \Filament\Notifications\Notification::make()
-                                    ->title('Signature Confirmed')
-                                    ->body('Your signature has been added. Waiting for instructor signature to complete the session.')
+                                    ->title('Tanda Tangan Dikonfirmasi')
+                                    ->body('Tanda tangan Anda telah ditambahkan. Menunggu tanda tangan instruktur untuk menyelesaikan sesi.')
                                     ->success()
                                     ->send();
                             }
@@ -551,8 +582,8 @@ class ScheduleResource extends Resource
                             \Illuminate\Support\Facades\Log::error('Failed to add signature: ' . $e->getMessage());
 
                             \Filament\Notifications\Notification::make()
-                                ->title('Failed to Add Signature')
-                                ->body('An error occurred. Please try again later.')
+                                ->title('Gagal Menambahkan Tanda Tangan')
+                                ->body('Terjadi kesalahan. Silakan coba lagi nanti.')
                                 ->danger()
                                 ->persistent()
                                 ->send();

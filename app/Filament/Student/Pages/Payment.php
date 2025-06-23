@@ -3,6 +3,7 @@
 namespace App\Filament\Student\Pages;
 
 use App\Helpers\MidtransHelper;
+use App\Http\Controllers\WhatsappController;
 use Filament\Pages\Page;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
@@ -117,6 +118,9 @@ class Payment extends Page
             'result' => $result
         ]);
 
+        // Send WhatsApp notification about successful payment
+        $this->sendPaymentWhatsappNotification();
+
         // Run MidtransCallbackController handle function with the payment result
         try {
             $callbackController = new \App\Http\Controllers\MidtransCallbackController();
@@ -201,5 +205,36 @@ class Payment extends Page
             'type' => 'info',
             'message' => 'Payment cancelled.'
         ]);
+    }
+
+    /**
+     * Send WhatsApp notification for successful payment
+     */
+    private function sendPaymentWhatsappNotification()
+    {
+        try {
+            $user = auth()->user();
+            $student = $user->student;
+
+            // Check if user has a phone number
+            if (!$user->phone) {
+                Log::warning("Cannot send WhatsApp notification: User {$user->id} has no phone number");
+                return;
+            }
+
+            // Use WhatsappController to send payment confirmation
+            $whatsappController = new \App\Http\Controllers\WhatsappController();
+            $result = $whatsappController->sendPaymentConfirmation($student, $this->order);
+
+            Log::info("WhatsApp payment notification sent", [
+                'user_id' => $user->id,
+                'phone' => $user->phone,
+                'result' => $result
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error sending WhatsApp notification: " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
     }
 }

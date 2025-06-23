@@ -29,6 +29,7 @@ class InstructorPanelProvider extends PanelProvider
             ->login(false)
             ->registration(false)
             ->sidebarWidth('w-72')
+            ->brandName('Panel Instruktur')
             ->colors([
                 'primary' => [
                     50 => '224, 231, 255',  // #e0e7ff

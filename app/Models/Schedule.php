@@ -73,4 +73,14 @@ class Schedule extends Model
   {
     return $this->belongsTo(Instructor::class);
   }
+
+  /**
+   * Get the student associated with this schedule through studentCourse.
+   * 
+   * @return \App\Models\Student|null
+   */
+  public function getStudentAttribute()
+  {
+    return $this->studentCourse->student ?? null;
+  }
 }
