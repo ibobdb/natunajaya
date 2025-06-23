@@ -18,37 +18,46 @@ class CourseResource extends Resource
     protected static ?string $model = Course::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
+    protected static ?string $navigationLabel = 'Kursus';
+    protected static ?string $modelLabel = 'Kursus';
+    protected static ?string $pluralModelLabel = 'Kursus';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Nama')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
+                    ->label('Deskripsi')
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('session')
+                    ->label('Sesi')
                     ->required()
                     ->numeric(),
                 Forms\Components\Select::make('duration_session')
+                    ->label('Durasi Sesi')
                     ->required()
                     ->options([
-                        'week' => 'Week',
-                        'month' => 'Month',
-                        'year' => 'Year',
+                        'week' => 'Minggu',
+                        'month' => 'Bulan',
+                        'year' => 'Tahun',
                     ])
                     ->default('week'),
                 Forms\Components\TextInput::make('duration')
+                    ->label('Durasi')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('price')
+                    ->label('Harga')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('Rp'),
                 Forms\Components\Select::make('default_car_type')
-                    ->label('Default Car Type')
+                    ->label('Tipe Mobil Default')
                     ->options([
                         'matic' => 'Matic',
                         'manual' => 'Manual',
@@ -57,7 +66,7 @@ class CourseResource extends Resource
                     ->default('matic')
                     ->live(),
                 Forms\Components\Select::make('default_car')
-                    ->label('Default Car')
+                    ->label('Mobil Default')
                     ->options(function (callable $get) {
                         $type = $get('default_car_type');
                         if (!$type) {
@@ -67,7 +76,8 @@ class CourseResource extends Resource
                     })
                     ->required()
                     ->searchable(),
-                Forms\Components\DatePicker::make('expired'),
+                Forms\Components\DatePicker::make('expired')
+                    ->label('Kedaluwarsa'),
             ]);
     }
 
@@ -76,26 +86,34 @@ class CourseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('session')
+                    ->label('Sesi')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('duration_session'),
+                Tables\Columns\TextColumn::make('duration_session')
+                    ->label('Durasi Sesi'),
                 Tables\Columns\TextColumn::make('duration')
+                    ->label('Durasi')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
                     // ->money()
+                    ->label('Harga')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expired')
+                    ->label('Kedaluwarsa')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -104,12 +122,12 @@ class CourseResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->label('Edit'),
+                Tables\Actions\DeleteAction::make()->label('Hapus'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->label('Hapus Terpilih'),
                 ]),
             ]);
     }

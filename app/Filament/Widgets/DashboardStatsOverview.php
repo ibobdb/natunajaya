@@ -17,20 +17,20 @@ class DashboardStatsOverview extends BaseWidget
 
   protected function getStats(): array
   {
-    // Total Cars
+    // Total Mobil
     $totalCars = Car::count();
 
-    // Total Instructors
+    // Total Instruktur
     $totalInstructors = Instructor::count();
 
-    // New Students This Month
+    // Siswa Baru Bulan Ini
     $currentMonth = Carbon::now()->month;
     $currentYear = Carbon::now()->year;
     $currentMonthStudents = Student::whereMonth('created_at', $currentMonth)
       ->whereYear('created_at', $currentYear)
       ->count();
 
-    // Student trend data
+    // Data tren siswa
     $previousMonth = Carbon::now()->subMonth();
     $previousMonthStudents = Student::whereMonth('created_at', $previousMonth->month)
       ->whereYear('created_at', $previousMonth->year)
@@ -41,16 +41,16 @@ class DashboardStatsOverview extends BaseWidget
       : ($currentMonthStudents > 0 ? 100 : 0);
 
     $studentTrendDescription = $studentPercentageChange >= 0
-      ? number_format(abs($studentPercentageChange), 1) . '% increase'
-      : number_format(abs($studentPercentageChange), 1) . '% decrease';
+      ? number_format(abs($studentPercentageChange), 1) . '% peningkatan'
+      : number_format(abs($studentPercentageChange), 1) . '% penurunan';
 
-    // Monthly Income
+    // Pendapatan Bulanan
     $currentMonthIncome = Order::where('status', 'success')
       ->whereMonth('created_at', $currentMonth)
       ->whereYear('created_at', $currentYear)
       ->sum('final_amount');
 
-    // Income trend data
+    // Data tren pendapatan
     $previousMonthIncome = Order::where('status', 'success')
       ->whereMonth('created_at', $previousMonth->month)
       ->whereYear('created_at', $previousMonth->year)
@@ -61,34 +61,34 @@ class DashboardStatsOverview extends BaseWidget
       : ($currentMonthIncome > 0 ? 100 : 0);
 
     $incomeTrendDescription = $incomePercentageChange >= 0
-      ? number_format(abs($incomePercentageChange), 1) . '% increase'
-      : number_format(abs($incomePercentageChange), 1) . '% decrease';
+      ? number_format(abs($incomePercentageChange), 1) . '% peningkatan'
+      : number_format(abs($incomePercentageChange), 1) . '% penurunan';
 
     return [
-      // Total Cars Stats
-      Stat::make('Total Cars', $totalCars)
-        ->description('All registered cars')
+      // Statistik Total Mobil
+      Stat::make('Total Mobil', $totalCars)
+        ->description('Semua mobil terdaftar')
         ->descriptionIcon('heroicon-m-truck')
         ->chart([0])
         ->color('success'),
 
-      // Total Instructors Stats
-      Stat::make('Total Instructors', $totalInstructors)
-        ->description('All active instructors')
+      // Statistik Total Instruktur
+      Stat::make('Total Instruktur', $totalInstructors)
+        ->description('Semua instruktur aktif')
         ->descriptionIcon('heroicon-m-user-group')
         ->chart([0])
         ->color('primary'),
 
-      // New Students This Month Stats
-      Stat::make('New Students This Month', $currentMonthStudents)
-        ->description($studentTrendDescription . ' from previous month')
+      // Statistik Siswa Baru Bulan Ini
+      Stat::make('Siswa Baru Bulan Ini', $currentMonthStudents)
+        ->description($studentTrendDescription . ' dari bulan sebelumnya')
         ->descriptionIcon($studentPercentageChange >= 0 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down')
         ->chart($this->getMonthlyStudentChartData())
         ->color($studentPercentageChange >= 0 ? 'success' : 'danger'),
 
-      // Monthly Income Stats
-      Stat::make('Monthly Income', 'Rp ' . number_format($currentMonthIncome, 0, ',', '.'))
-        ->description($incomeTrendDescription . ' from previous month')
+      // Statistik Pendapatan Bulanan
+      Stat::make('Pendapatan Bulanan', 'Rp ' . number_format($currentMonthIncome, 0, ',', '.'))
+        ->description($incomeTrendDescription . ' dari bulan sebelumnya')
         ->descriptionIcon($incomePercentageChange >= 0 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down')
         ->chart($this->getMonthlyIncomeChartData())
         ->color($incomePercentageChange >= 0 ? 'success' : 'danger'),
@@ -97,7 +97,7 @@ class DashboardStatsOverview extends BaseWidget
 
   private function getMonthlyStudentChartData()
   {
-    // Get student counts for the last 6 months
+    // Dapatkan jumlah siswa untuk 6 bulan terakhir
     $monthlyData = Student::select(
       DB::raw('YEAR(created_at) as year'),
       DB::raw('MONTH(created_at) as month'),
@@ -112,7 +112,7 @@ class DashboardStatsOverview extends BaseWidget
     $chartData = $monthlyData->pluck('count')->toArray();
 
     if (empty($chartData)) {
-      $chartData = [0]; // Default value to prevent errors
+      $chartData = [0]; // Nilai default untuk mencegah error
     }
 
     return $chartData;
@@ -120,7 +120,7 @@ class DashboardStatsOverview extends BaseWidget
 
   private function getMonthlyIncomeChartData()
   {
-    // Get income data for the last 6 months
+    // Dapatkan data pendapatan untuk 6 bulan terakhir
     $monthlyData = Order::where('status', 'success')
       ->where('created_at', '>=', Carbon::now()->subMonths(6))
       ->select(
@@ -136,7 +136,7 @@ class DashboardStatsOverview extends BaseWidget
     $chartData = $monthlyData->pluck('total')->toArray();
 
     if (empty($chartData)) {
-      $chartData = [0]; // Default value to prevent errors
+      $chartData = [0]; // Nilai default untuk mencegah error
     }
 
     return $chartData;

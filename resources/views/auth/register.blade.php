@@ -31,7 +31,7 @@
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" class="text-gray-700 font-medium" />
+            <x-input-label for="email" :value="__('Alamat Email')" class="text-gray-700 font-medium" />
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
@@ -50,7 +50,7 @@
 
         <!-- Password -->
         <div>
-            <x-input-label for="password" :value="__('Password')" class="text-gray-700 font-medium" />
+            <x-input-label for="password" :value="__('Kata Sandi')" class="text-gray-700 font-medium" />
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
@@ -70,7 +70,7 @@
 
         <!-- Confirm Password -->
         <div>
-            <x-input-label for="password_confirmation" :value="__('Konfirmasi Password')"
+            <x-input-label for="password_confirmation" :value="__('Konfirmasi Kata Sandi')"
                 class="text-gray-700 font-medium" />
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

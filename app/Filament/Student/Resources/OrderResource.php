@@ -18,6 +18,7 @@ use App\Filament\Student\Resources\OrderResource\RelationManagers;
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
+    protected static ?string $label = 'Transaksi';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -39,7 +40,7 @@ class OrderResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('course_id')
-                    ->label('Course')
+                    ->label('Kursus')
                     ->options(function () {
                         return \App\Models\Course::all()->map(function ($course) {
                             return [
@@ -77,7 +78,7 @@ class OrderResource extends Resource
                     ->required(),
 
                 Forms\Components\TextInput::make('student_name')
-                    ->label('Student Name')
+                    ->label('Nama Siswa')
                     ->default($student->name)
                     ->disabled()
                     ->dehydrated(false), // Don't include in form submission
@@ -91,14 +92,16 @@ class OrderResource extends Resource
                     ->disabled(),
 
                 Forms\Components\Textarea::make('description')
-                    ->label('Description')
+                    ->label('Deskripsi')
                     ->disabled()
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('session')
+                    ->label('Sesi')
                     ->required()
                     ->label('Pertemuan')
                     ->disabled(),
                 Forms\Components\TextInput::make('final_amount')
+                    ->label('Harga')
                     ->numeric()
                     ->required()
                     ->disabled(),
@@ -112,14 +115,18 @@ class OrderResource extends Resource
             ->recordUrl(fn(Order $record): string => route('filament.student.pages.payment', ['inv' => $record->invoice_id]))
             ->columns([
                 Tables\Columns\TextColumn::make('invoice_id')
+                    ->label('Nomor Invoice')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('student.name')
+                    ->label('Nama Siswa')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('amount')
+                    ->label('Harga Awal')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('final_amount')
+                    ->label('Harga Akhir')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
@@ -150,7 +157,7 @@ class OrderResource extends Resource
                     ->action(function (Order $record) {
                         $record->delete();
                         Notification::make()
-                            ->title('Order deleted successfully')
+                            ->title('Pesanan berhasil dihapus')
                             ->success()
                             ->send();
                     })

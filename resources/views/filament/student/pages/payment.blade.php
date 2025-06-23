@@ -1,44 +1,44 @@
 <x-filament-panels::page>
     <x-filament::section>
         <x-slot name="heading">
-            Payment for Invoice: {{ $this->invoiceNumber }}
+            Pembayaran untuk Faktur: {{ $this->invoiceNumber }}
         </x-slot>
 
         @if($this->order)
         <div class="space-y-6">
             <x-filament::card class="filament-payment-summary dark:bg-gray-800">
                 <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-8 mb-3">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 py-4">Payment Summary</h3>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 py-4">Ringkasan Pembayaran</h3>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
                     <div class="space-y-3">
                         <div class="flex justify-between">
-                            <span class="text-gray-500 dark:text-gray-400">Course:</span>
+                            <span class="text-gray-500 dark:text-gray-400">Kursus:</span>
                             <span
                                 class="text-gray-900 dark:text-gray-100">{{ $this->order->course->name ?? 'N/A' }}</span>
                         </div>
 
                         <div class="flex justify-between">
-                            <span class="text-gray-500 dark:text-gray-400">Description:</span>
+                            <span class="text-gray-500 dark:text-gray-400">Deskripsi:</span>
                             <span
-                                class="text-gray-500 dark:text-gray-100 text-sm">{{ $this->order->course->description ?? 'No description available' }}</span>
+                                class="text-gray-500 dark:text-gray-100 text-sm">{{ $this->order->course->description ?? 'Tidak ada deskripsi' }}</span>
                         </div>
 
                         <div class="flex justify-between">
-                            <span class="text-gray-500 dark:text-gray-400">Duration:</span>
+                            <span class="text-gray-500 dark:text-gray-400">Durasi:</span>
                             <span class="text-gray-900 dark:text-gray-100">{{ $this->order->course->duration ?? 'N/A' }}
-                                {{ $this->order->course->duration_session ?? 'month' }}</span>
+                                {{ ($this->order->course->duration_session ?? 'month') == 'month' ? 'bulan' : (($this->order->course->duration_session ?? 'month') == 'week' ? 'minggu' : 'tahun') }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-500 dark:text-gray-400">Session:</span>
+                            <span class="text-gray-500 dark:text-gray-400">Sesi:</span>
                             <span class="text-gray-900 dark:text-gray-100">{{ $this->order->course->session ?? 'N/A' }}
                                 X</span>
                         </div>
                     </div>
                     <div class="space-y-3 ">
                         <div class="flex justify-between">
-                            <span class="text-gray-500 dark:text-gray-400">Amount:</span>
+                            <span class="text-gray-500 dark:text-gray-400">Jumlah:</span>
                             <span
                                 class="font-medium text-gray-900 dark:text-white">{{ number_format($this->order->amount, 0, ',', '.') }}
                                 IDR</span>
@@ -48,13 +48,13 @@
                             <span class="text-gray-500 dark:text-gray-400">Status:</span>
                             <x-filament::badge
                                 :color="$this->order->status == 'success' ? 'success' : ($this->order->status == 'pending' ? 'warning' : 'danger')">
-                                {{ ucfirst($this->order->status) }}
+                                {{ $this->order->status == 'success' ? 'Berhasil' : ($this->order->status == 'pending' ? 'Tertunda' : ($this->order->status == 'failed' ? 'Gagal' : ucfirst($this->order->status))) }}
                             </x-filament::badge>
                         </div>
 
                         @if($this->order->payment_date)
                         <div class="flex justify-between">
-                            <span class="text-gray-500 dark:text-gray-400">Payment Date:</span>
+                            <span class="text-gray-500 dark:text-gray-400">Tanggal Pembayaran:</span>
                             <span
                                 class="text-gray-900 dark:text-gray-100">{{ $this->order->payment_date->format('d M Y') }}</span>
                         </div>
@@ -63,7 +63,7 @@
 
                     <div class="space-y-3">
                         <div class="flex justify-between">
-                            <span class="text-gray-500 dark:text-gray-400">Invoice Number:</span>
+                            <span class="text-gray-500 dark:text-gray-400">Nomor Faktur:</span>
                             <span class="text-gray-900 dark:text-gray-100">{{ $this->invoiceNumber }}</span>
                         </div>
 
@@ -78,13 +78,13 @@
                 <x-filament::button type="button" color="primary" wire:loading.attr="disabled"
                     wire:target="processPayment" wire:loading.class="opacity-50 cursor-not-allowed"
                     wire:click="processPayment">
-                    Prepare Payment
+                    Siapkan Pembayaran
                 </x-filament::button>
                 @else
                 <x-filament::button type="button" color="success" wire:loading.attr="disabled"
                     wire:target="initiateMidtransPayment" wire:loading.class="opacity-50 cursor-not-allowed"
                     wire:click="initiateMidtransPayment">
-                    Pay Now
+                    Bayar Sekarang
                 </x-filament::button>
                 @endif
             </div>
@@ -95,7 +95,8 @@
             <div class="flex items-center justify-center py-4">
                 <x-filament::icon icon="heroicon-o-exclamation-circle"
                     class="h-5 w-5 text-gray-400 dark:text-gray-500 mr-2" />
-                <p class="text-gray-500 dark:text-gray-400">No payment information available for this invoice.</p>
+                <p class="text-gray-500 dark:text-gray-400">Tidak ada informasi pembayaran tersedia untuk faktur ini.
+                </p>
             </div>
         </x-filament::card>
         @endif
@@ -109,9 +110,7 @@
 <script>
     function setupMidtransEventHandler() {
         Livewire.on('openMidtransPopup', event => {
-            console.log('Payment popup triggered with token:', event.snapToken ? 'Token exists' : 'No token');
-            
-            // Open Midtrans Snap popup with configuration options
+            console.log('Pop-up pembayaran dipicu dengan token:', event.snapToken ? 'Token ada' : 'Tidak ada token');                // Buka pop-up Midtrans Snap dengan opsi konfigurasi
             window.snap.pay(event.snapToken, {
                 skipOrderSummary: true,
                 showOrderId: true,        
@@ -121,32 +120,32 @@
                 @this.paymentSuccess(result);
                 },
                 onPending: function(result){
-                    console.log('Payment pending', result);
+                    console.log('Pembayaran tertunda', result);
                     Livewire.dispatch('paymentPending', { result: result });
                 },
                 onError: function(result){
-                    console.log('Payment error', result);
+                    console.log('Error pembayaran', result);
                     Livewire.dispatch('paymentError', { result: result });
                 },
                 onClose: function(){
-                    console.log('Payment popup closed');
+                    console.log('Pop-up pembayaran ditutup');
                     Livewire.dispatch('paymentCancelled');
                 }
             });
         });
     }
 
-    // Setup handler initially
+    // Pasang handler pada awalnya
     document.addEventListener('livewire:initialized', function() {
         setupMidtransEventHandler();
     });
 
-    // Re-initialize handler when Livewire updates
+    // Inisialisasi ulang handler ketika Livewire melakukan update
     document.addEventListener('livewire:navigated', function() {
         setupMidtransEventHandler();
     });
     
-    // Also handle updates that don't involve navigation
+    // Juga menangani update yang tidak melibatkan navigasi
     document.addEventListener('livewire:update', function() {
         setupMidtransEventHandler();
     });

@@ -22,13 +22,13 @@ class ScheduleResource extends Resource
     protected static ?string $model = Schedule::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?string $navigationLabel = 'My Schedules';
-    protected static ?string $modelLabel = 'Driving Schedule';
-    protected static ?string $pluralModelLabel = 'Driving Schedules';
+    protected static ?string $navigationLabel = 'Jadwal Saya';
+    protected static ?string $modelLabel = 'Jadwal Mengemudi';
+    protected static ?string $pluralModelLabel = 'Jadwal Mengemudi';
     protected static ?int $navigationSort = 10;
 
     /**
-     * Send WhatsApp notification for schedule update
+     * Mengirim notifikasi WhatsApp untuk pembaruan jadwal
      * 
      * @param \App\Models\Schedule $schedule
      * @return void
@@ -103,22 +103,22 @@ class ScheduleResource extends Resource
             ->defaultSort('start_date', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('studentCourse.student.name')
-                    ->label('Student Name')
+                    ->label('Nama Siswa')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('studentCourse.course.name')
-                    ->label('Course Name')
+                    ->label('Nama Kursus')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('for_session')
-                    ->label('Session')
+                    ->label('Sesi')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
-                    ->label('Start Date')
+                    ->label('Tanggal Mulai')
                     ->formatStateUsing(function ($state) {
                         if ($state === null || $state === '') {
-                            return 'Date not set';
+                            return 'Tanggal belum diatur';
                         }
                         return $state->format('M d, Y H:i');
                     })
@@ -142,7 +142,7 @@ class ScheduleResource extends Resource
                     ->formatStateUsing(fn(string $state): string => str_replace('_', ' ', ucfirst($state))),
 
                 Tables\Columns\IconColumn::make('att_instructor')
-                    ->label('Instructor Signature')
+                    ->label('Tanda Tangan Instruktur')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
@@ -151,19 +151,20 @@ class ScheduleResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
                     ->options([
-                        'ready' => 'Ready',
-                        'waiting_signature' => 'Waiting Signature',
-                        'complete' => 'Complete',
+                        'ready' => 'Siap',
+                        'waiting_signature' => 'Menunggu Tanda Tangan',
+                        'complete' => 'Selesai',
                     ]),
             ])
             ->actions([
                 // View action for showing schedule details
                 Tables\Actions\ViewAction::make()
-                    ->modalHeading(fn(Schedule $record) => 'Driving Schedule #' . $record->id)
+                    ->modalHeading(fn(Schedule $record) => 'Jadwal Mengemudi #' . $record->id)
                     ->icon('heroicon-o-eye')
                     ->iconButton()
-                    ->tooltip('View Details')
+                    ->tooltip('Lihat Detail')
                     ->modalWidth('xl')
                     ->extraModalFooterActions(fn() => [])
                     ->modalContent(function (Schedule $record) {
@@ -175,12 +176,12 @@ class ScheduleResource extends Resource
                             ->label('')
                             ->icon('heroicon-o-pencil')
                             ->color('success')
-                            ->tooltip('Add Signature')
+                            ->tooltip('Tambah Tanda Tangan')
                             ->visible(fn(Schedule $record) => $record->status === 'waiting_signature' && $record->att_instructor != 1)
                             ->requiresConfirmation()
-                            ->modalHeading('Confirm Signature')
-                            ->modalDescription('By adding your signature, you confirm that you conducted this driving session. This cannot be undone.')
-                            ->modalSubmitActionLabel('Confirm Signature')
+                            ->modalHeading('Konfirmasi Tanda Tangan')
+                            ->modalDescription('Dengan menambahkan tanda tangan Anda, Anda mengonfirmasi bahwa Anda telah melakukan sesi mengemudi ini. Tindakan ini tidak dapat dibatalkan.')
+                            ->modalSubmitActionLabel('Konfirmasi Tanda Tangan')
                             ->action(function (Schedule $record) {
                                 // Since we're in the Instructor namespace, update att_instructor to 1
                                 $updateData = ['att_instructor' => 1];
@@ -220,21 +221,21 @@ class ScheduleResource extends Resource
                                             ->update(['status' => 'done']);
 
                                         \Filament\Notifications\Notification::make()
-                                            ->title('Course Completed')
-                                            ->body('All sessions for this course are now complete.')
+                                            ->title('Kursus Selesai')
+                                            ->body('Semua sesi untuk kursus ini telah selesai.')
                                             ->success()
                                             ->send();
                                     } else {
                                         \Filament\Notifications\Notification::make()
-                                            ->title('Session Completed')
-                                            ->body('Both you and the student have signed. The session is now complete.')
+                                            ->title('Sesi Selesai')
+                                            ->body('Anda dan siswa telah menandatangani. Sesi sekarang telah selesai.')
                                             ->success()
                                             ->send();
                                     }
                                 } else {
                                     \Filament\Notifications\Notification::make()
-                                        ->title('Signature Confirmed')
-                                        ->body('Your signature has been added. Waiting for student signature to complete the session.')
+                                        ->title('Tanda Tangan Dikonfirmasi')
+                                        ->body('Tanda tangan Anda telah ditambahkan. Menunggu tanda tangan siswa untuk menyelesaikan sesi.')
                                         ->success()
                                         ->send();
                                 }
@@ -243,14 +244,14 @@ class ScheduleResource extends Resource
 
                 // Direct sign action in the table
                 Tables\Actions\Action::make('confirm_sign')
-                    ->label('Confirm Sign')
+                    ->label('Konfirmasi Tanda Tangan')
                     ->icon('heroicon-o-check')
                     ->color('success')
                     ->visible(fn(Schedule $record) => $record->status === 'waiting_signature' && $record->att_instructor != 1)
                     ->requiresConfirmation()
-                    ->modalHeading('Confirm Session Signature')
-                    ->modalDescription('By adding your signature, you confirm that you conducted this driving session. This cannot be undone.')
-                    ->modalSubmitActionLabel('Sign')
+                    ->modalHeading('Konfirmasi Tanda Tangan Sesi')
+                    ->modalDescription('Dengan menambahkan tanda tangan Anda, Anda mengonfirmasi bahwa Anda telah melakukan sesi mengemudi ini. Tindakan ini tidak dapat dibatalkan.')
+                    ->modalSubmitActionLabel('Tanda Tangan')
                     ->action(function (Schedule $record) {
                         // Update att_instructor to 1
                         $updateData = ['att_instructor' => 1];
@@ -286,21 +287,21 @@ class ScheduleResource extends Resource
                                     ->update(['status' => 'done']);
 
                                 Notification::make()
-                                    ->title('Course Completed')
-                                    ->body('All sessions for this course are now complete.')
+                                    ->title('Kursus Selesai')
+                                    ->body('Semua sesi untuk kursus ini telah selesai.')
                                     ->success()
                                     ->send();
                             } else {
                                 Notification::make()
-                                    ->title('Session Completed')
-                                    ->body('Both you and the student have signed. The session is now complete.')
+                                    ->title('Sesi Selesai')
+                                    ->body('Anda dan siswa telah menandatangani. Sesi sekarang telah selesai.')
                                     ->success()
                                     ->send();
                             }
                         } else {
                             Notification::make()
-                                ->title('Signature Confirmed')
-                                ->body('Your signature has been added. Waiting for student signature to complete the session.')
+                                ->title('Tanda Tangan Dikonfirmasi')
+                                ->body('Tanda tangan Anda telah ditambahkan. Menunggu tanda tangan siswa untuk menyelesaikan sesi.')
                                 ->success()
                                 ->send();
                         }
@@ -308,7 +309,7 @@ class ScheduleResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->label('Hapus Terpilih'),
                 ]),
             ]);
     }

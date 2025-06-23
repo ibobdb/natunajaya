@@ -18,22 +18,27 @@ class CarResource extends Resource
     protected static ?string $model = Car::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-truck';
+    protected static ?string $navigationLabel = 'Mobil';
+    protected static ?string $modelLabel = 'Mobil';
+    protected static ?string $pluralModelLabel = 'Mobil';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Nama')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('type')
+                    ->label('Tipe')
                     ->required()
                     ->options([
                         'matic' => 'Matic',
                         'manual' => 'Manual',
                     ]),
                 Forms\Components\DatePicker::make('last_kir_check')
-                    ->label('Last KIR Check')
+                    ->label('Pemeriksaan KIR Terakhir')
                     ->nullable()
                     ->maxDate(now()),
             ]);
@@ -44,18 +49,22 @@ class CarResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
+                    ->label('Tipe')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('last_kir_check')
                     ->date()
                     ->sortable()
-                    ->label('Last KIR Check'),
+                    ->label('Pemeriksaan KIR Terakhir'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -64,12 +73,12 @@ class CarResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->label('Edit'),
+                Tables\Actions\DeleteAction::make()->label('Hapus'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->label('Hapus Terpilih'),
                 ]),
             ]);
     }
