@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/ibobdb/natunajaya/compare/v1.7.0...v1.8.0) (2025-06-23)
+
+
+### Features
+
+* **instructor, schedule:** translate UI elements to Indonesian ([acf9bf2](https://github.com/ibobdb/natunajaya/commit/acf9bf2cdb0fe21acffa638a263b245d34e88020))
+
 ## [1.7.0](https://github.com/ibobdb/natunajaya/compare/v1.6.0...v1.7.0) (2025-06-20)
 
 
