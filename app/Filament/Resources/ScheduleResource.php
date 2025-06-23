@@ -53,6 +53,10 @@ class ScheduleResource extends Resource
                     ->label('Course Name')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('studentCourse.instructor.name')
+                    ->label('Instructor Name')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('for_session')
                     ->numeric()
                     ->sortable(),
