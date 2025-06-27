@@ -463,33 +463,53 @@ class ScheduleResource extends Resource
                                 ->success()
                                 ->send();
 
-                            // Send WhatsApp notification about the schedule update
+                            // Use NotificationController to queue a notification
                             try {
                                 // Get the updated schedule with fresh data
-                                $record->refresh();
+                                $record->refresh();                                // Get the student associated with this schedule
+                                $student = $record->studentCourse->student;
 
-                                // Get the student associated with this schedule
-                                $student = $record->student;
+                                // Get phone from user table, not from student table
+                                $phone = null;
+                                if ($student && $student->user) {
+                                    $phone = $student->user->phone;
+                                }
 
-                                if ($student) {
-                                    // Send WhatsApp notification
-                                    $whatsappController = new \App\Http\Controllers\WhatsappController();
-                                    $result = $whatsappController->sendScheduleUpdateNotification($student, $record);
+                                if ($student && $phone) {
+                                    // Prepare notification data
+                                    $notificationData = [
+                                        'student_name' => $student->name,
+                                        'course_name' => $record->studentCourse->course->name ?? 'Kursus Mengemudi',
+                                        'session' => $record->for_session,
+                                        'date' => $record->start_date->format('d M Y'),
+                                        'time' => $record->start_date->format('H:i'),
+                                        'instructor' => $record->instructor->name ?? 'Instruktur yang ditugaskan'
+                                    ];
 
-                                    \Illuminate\Support\Facades\Log::info('WhatsApp schedule notification sent from ScheduleResource', [
+                                    // Use the static method from NotificationController
+                                    \App\Http\Controllers\NotificationController::scheduleUpdate(
+                                        $phone,
+                                        $notificationData
+                                    );
+
+                                    \Illuminate\Support\Facades\Log::info('Schedule update notification queued', [
                                         'student_id' => $student->id,
                                         'schedule_id' => $record->id,
-                                        'result' => $result
+                                        'phone' => $phone
                                     ]);
                                 } else {
-                                    \Illuminate\Support\Facades\Log::warning('Could not send WhatsApp notification - No student found for schedule', [
-                                        'schedule_id' => $record->id
+                                    \Illuminate\Support\Facades\Log::warning('Could not queue notification - No student found or phone number missing', [
+                                        'schedule_id' => $record->id,
+                                        'student_id' => $student->id ?? null,
+                                        'has_user' => $student && $student->user ? true : false,
+                                        'has_phone' => $student && $student->user && !empty($student->user->phone)
                                     ]);
                                 }
                             } catch (\Exception $e) {
-                                \Illuminate\Support\Facades\Log::error('Error sending WhatsApp notification from ScheduleResource', [
+                                \Illuminate\Support\Facades\Log::error('Error queueing schedule update notification', [
                                     'schedule_id' => $record->id,
-                                    'error' => $e->getMessage()
+                                    'error' => $e->getMessage(),
+                                    'trace' => $e->getTraceAsString()
                                 ]);
                                 // Don't show error to user, just log it
                             }

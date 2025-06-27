@@ -94,14 +94,32 @@ class MidtransCallbackController extends Controller
                 Log::info('Order status updated', [
                     'from' => $originalStatus,
                     'to' => $newStatus
-                ]);
-
-                // Send WhatsApp notifications based on payment status changes
+                ]);                // Send notifications via queue when payment status changes
                 if ($newStatus !== $originalStatus) {
-                    $this->sendPaymentStatusNotification($order, $newStatus);
+                    Log::info('Payment status changed, queueing notifications', [
+                        'from' => $originalStatus,
+                        'to' => $newStatus,
+                        'order_id' => $order->id
+                    ]);
 
-                    // Also send admin notifications for any payment status change
-                    $this->sendAdminPaymentNotification($order, $newStatus);
+                    // Only queue payment notifications when status changes to success
+                    if ($newStatus === 'success') {
+                        // Queue payment status notifications to student
+                        $this->sendPaymentStatusNotification($order, $newStatus);
+
+                        // Queue admin notifications for successful payment
+                        $this->sendAdminPaymentNotification($order, $newStatus);
+
+                        Log::info('Payment success notifications queued', [
+                            'order_id' => $order->id,
+                            'invoice_id' => $order->invoice_id
+                        ]);
+                    } else {
+                        Log::info('Payment status changed but not success, skipping notifications', [
+                            'status' => $newStatus,
+                            'order_id' => $order->id
+                        ]);
+                    }
                 }
 
                 // Create student course record first
@@ -216,38 +234,59 @@ class MidtransCallbackController extends Controller
     private function sendPaymentStatusNotification($order, $status)
     {
         try {
-            // Get the user and student
-            $user = \App\Models\User::find($order->user_id);
-            if (!$user) {
-                Log::warning("Cannot send WhatsApp notification: User not found for order {$order->id}");
-                return;
-            }
-
-            $student = $user->student;
+            // Get the student associated with this order
+            $student = $order->student;
             if (!$student) {
-                Log::warning("Cannot send WhatsApp notification: No student record for user {$user->id}");
+                Log::warning("Cannot queue payment notification: Student not found for order {$order->id}");
                 return;
             }
 
-            // Check if user has a phone number
-            if (empty($user->phone)) {
-                Log::warning("Cannot send WhatsApp notification: User {$user->id} has no phone number");
+            // Get the user through the student relation
+            $user = $student->user;
+            if (!$user) {
+                Log::warning("Cannot queue payment notification: User not found for student {$student->id}, order {$order->id}");
                 return;
             }
 
-            // Use WhatsappController to send payment status notification
-            $whatsappController = new \App\Http\Controllers\WhatsappController();
-            $result = $whatsappController->sendPaymentStatusNotification($student, $order, $status);
+            // Check if user has a phone number (empty or null)
+            if (!$user->phone || trim($user->phone) === '') {
+                Log::warning("Skipping notification: User {$user->id} has no phone number");
+                return;
+            }
 
-            Log::info("WhatsApp payment notification sent from callback controller", [
+            // Format the phone number correctly (remove leading 0, add country code if needed)
+            $phoneNumber = $user->phone;
+            if (substr($phoneNumber, 0, 1) === '0') {
+                // Replace leading 0 with 62 (Indonesia country code)
+                $phoneNumber = '62' . substr($phoneNumber, 1);
+            } else if (substr($phoneNumber, 0, 2) !== '62') {
+                // Add country code if not present
+                $phoneNumber = '62' . $phoneNumber;
+            }
+
+            // Prepare notification data
+            $notificationData = [
+                'student_name' => $student->name,
+                'course_name' => $order->course->name ?? 'Kursus',
+                'amount' => number_format($order->amount, 0, ',', '.'),
+                'payment_date' => now()->format('d M Y'),
+                'invoice_number' => $order->invoice_id
+            ];
+
+            // Queue notification using NotificationController
+            \App\Http\Controllers\NotificationController::paymentSuccess(
+                $phoneNumber,
+                $notificationData
+            );
+
+            Log::info("Payment notification queued", [
                 'order_id' => $order->id,
                 'user_id' => $user->id,
-                'phone' => $user->phone,
-                'status' => $status,
-                'result' => $result
+                'phone' => $phoneNumber,
+                'status' => $status
             ]);
         } catch (\Exception $e) {
-            Log::error("Error sending WhatsApp notification from callback: " . $e->getMessage(), [
+            Log::error("Error queueing payment notification: " . $e->getMessage(), [
                 'order_id' => $order->id,
                 'status' => $status,
                 'trace' => $e->getTraceAsString()
@@ -265,16 +304,59 @@ class MidtransCallbackController extends Controller
     private function sendAdminPaymentNotification($order, $status)
     {
         try {
-            $whatsappController = new \App\Http\Controllers\WhatsappController();
-            $result = $whatsappController->sendAdminPaymentNotification($order, $status);
+            // Get admin phone numbers from config or DB
+            $adminPhones = config('app.admin_phones', []);
 
-            Log::info("WhatsApp admin payment notification sent", [
-                'order_id' => $order->id,
-                'status' => $status,
-                'result' => $result
-            ]);
+            if (empty($adminPhones)) {
+                Log::warning("No admin phones configured for notifications");
+                return;
+            }
+
+            // Get the student associated with this order
+            $student = $order->student;
+            $studentName = $student ? $student->name : 'Student';
+
+            // Queue admin notification instead of sending directly
+            $notificationData = [
+                'student_name' => $studentName,
+                'course_name' => $order->course->name ?? 'Kursus',
+                'amount' => number_format($order->amount, 0, ',', '.'),
+                'payment_date' => now()->format('d M Y'),
+                'invoice_number' => $order->invoice_id,
+                'status' => $status
+            ];
+
+            foreach ($adminPhones as $adminPhone) {
+                // Skip if phone number is null or empty
+                if (!$adminPhone || trim($adminPhone) === '') {
+                    Log::warning("Skipping admin notification: Empty phone number found in config");
+                    continue;
+                }
+
+                // Format the phone number correctly (remove leading 0, add country code if needed)
+                if (substr($adminPhone, 0, 1) === '0') {
+                    // Replace leading 0 with 62 (Indonesia country code)
+                    $adminPhone = '62' . substr($adminPhone, 1);
+                } else if (substr($adminPhone, 0, 2) !== '62') {
+                    // Add country code if not present
+                    $adminPhone = '62' . $adminPhone;
+                }
+
+                // Insert notification to queue using the standard payment success notification
+                // since adminPaymentNotification doesn't exist in NotificationController
+                \App\Http\Controllers\NotificationController::paymentSuccess(
+                    $adminPhone,
+                    $notificationData
+                );
+
+                Log::info("Admin payment notification queued", [
+                    'order_id' => $order->id,
+                    'status' => $status,
+                    'admin_phone' => $adminPhone
+                ]);
+            }
         } catch (\Exception $e) {
-            Log::error("Error sending WhatsApp admin notification: " . $e->getMessage(), [
+            Log::error("Error queueing admin notification: " . $e->getMessage(), [
                 'order_id' => $order->id,
                 'status' => $status,
                 'trace' => $e->getTraceAsString()

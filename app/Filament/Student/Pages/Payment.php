@@ -3,7 +3,6 @@
 namespace App\Filament\Student\Pages;
 
 use App\Helpers\MidtransHelper;
-use App\Http\Controllers\WhatsappController;
 use Filament\Pages\Page;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
@@ -118,8 +117,8 @@ class Payment extends Page
             'result' => $result
         ]);
 
-        // Send WhatsApp notification about successful payment
-        $this->sendPaymentWhatsappNotification();
+        // Notification will be handled by the callback controller
+        Log::info('Payment notification will be handled by callback controller');
 
         // Run MidtransCallbackController handle function with the payment result
         try {
@@ -208,9 +207,10 @@ class Payment extends Page
     }
 
     /**
-     * Send WhatsApp notification for successful payment
+     * Queue payment success notification to notification_queue table
+     * @deprecated Notifications are now handled directly by MidtransCallbackController
      */
-    private function sendPaymentWhatsappNotification()
+    private function queuePaymentSuccessNotification() // This method is no longer called
     {
         try {
             $user = auth()->user();
@@ -218,22 +218,35 @@ class Payment extends Page
 
             // Check if user has a phone number
             if (!$user->phone) {
-                Log::warning("Cannot send WhatsApp notification: User {$user->id} has no phone number");
+                Log::warning("Cannot queue payment notification: User {$user->id} has no phone number");
                 return;
             }
 
-            // Use WhatsappController to send payment confirmation
-            $whatsappController = new \App\Http\Controllers\WhatsappController();
-            $result = $whatsappController->sendPaymentConfirmation($student, $this->order);
+            // Prepare notification data
+            $notificationData = [
+                'student_name' => $student->name,
+                'course_name' => $this->order->course->name ?? 'Kursus',
+                'amount' => number_format($this->order->amount, 0, ',', '.'),
+                'payment_date' => now()->format('d M Y'),
+                'invoice_number' => $this->order->invoice_id
+            ];
 
-            Log::info("WhatsApp payment notification sent", [
+            // Queue notification using NotificationController
+            \App\Http\Controllers\NotificationController::paymentSuccess(
+                $user->phone,
+                $notificationData
+            );
+
+            Log::info("Payment success notification queued", [
                 'user_id' => $user->id,
                 'phone' => $user->phone,
-                'result' => $result
+                'order_id' => $this->order->id,
+                'invoice_id' => $this->order->invoice_id
             ]);
         } catch (\Exception $e) {
-            Log::error("Error sending WhatsApp notification: " . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
+            Log::error("Error queueing payment notification: " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'order_id' => $this->order->id ?? null
             ]);
         }
     }

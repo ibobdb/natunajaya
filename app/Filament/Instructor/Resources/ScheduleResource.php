@@ -2,20 +2,21 @@
 
 namespace App\Filament\Instructor\Resources;
 
-use App\Filament\Instructor\Resources\ScheduleResource\Pages;
-use App\Filament\Instructor\Resources\ScheduleResource\RelationManagers;
-use App\Models\Schedule;
-use App\Models\Instructor;
-use App\Http\Controllers\WhatsappController;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Schedule;
+use Filament\Forms\Form;
+use App\Models\Instructor;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Log;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
+use App\Http\Controllers\WhatsappController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Log;
+use App\Filament\Instructor\Resources\ScheduleResource\Pages;
+use App\Filament\Instructor\Resources\ScheduleResource\RelationManagers;
 
 class ScheduleResource extends Resource
 {
@@ -70,9 +71,9 @@ class ScheduleResource extends Resource
                 return;
             }
 
-            // Use WhatsappController to send schedule update
-            $whatsappController = new WhatsappController();
-            $result = $whatsappController->sendScheduleUpdateNotification($student, $schedule);
+            if ($student && $student->user->phone) {
+                $result = NotificationController::courseComplete($student->user->phone, $schedule->toArray());
+            }
 
             Log::info("WhatsApp schedule update notification sent from instructor side", [
                 'user_id' => $student->user->id ?? 'unknown',
@@ -268,9 +269,9 @@ class ScheduleResource extends Resource
                         $record->refresh();
 
                         // Send WhatsApp notification if schedule is completed
-                        if (isset($updateData['status']) && $updateData['status'] === 'complete') {
-                            self::sendScheduleUpdateNotification($record);
-                        }
+                        // if (isset($updateData['status']) && $updateData['status'] === 'complete') {
+                        //     self::sendScheduleUpdateNotification($record);
+                        // }
 
                         // Check if the session is now complete
                         if (isset($updateData['status']) && $updateData['status'] === 'complete') {
