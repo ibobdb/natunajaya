@@ -1,0 +1,47 @@
+@import "../../../../vendor/filament/filament/resources/css/theme.css";
+@config 'tailwind.config.js';
+
+/* Sidebar styling with indigo 800-900 gradient */
+
+.fi-sidebar {
+    width: 16rem;
+    background-image: linear-gradient(to bottom, #312e81, #1e1b4b);
+    color: white !important;
+}
+
+.fi-logo {
+    color: white !important;
+}
+
+.fi-sidebar .fi-sidebar-header {
+    background-image: linear-gradient(to bottom, #312e81, #1e1b4b);
+    /* indigo-800 to indigo-900 */
+    color: white !important;
+}
+
+/* Ensure sidebar links are white */
+
+.fi-sidebar a,
+.fi-sidebar button,
+.fi-sidebar span {
+    color: white !important;
+}
+
+.fi-sidebar a:hover {
+    background-color: #6366f1;
+    /* indigo-500 */
+    color: #1e1b4b !important;
+}
+
+.fi-sidebar .active {
+    background-color: #fff !important;
+    /* White background for active menu */
+}
+
+.fi-sidebar .active,
+.fi-sidebar .active .fi-sidebar-item-label,
+.fi-sidebar .active .fi-sidebar-item-icon {
+    color: #1e1b4b !important;
+    /* Indigo-900 for active label and icon */
+    font-weight: 600;
+}

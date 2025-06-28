@@ -22,7 +22,7 @@ class ReportResource extends Resource
     protected static ?string $model = Report::class;
     public static ?int $navigationSort = 999;
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
-    protected static ?string $navigationLabel = 'Sales Report';
+    protected static ?string $navigationLabel = 'Laporan Transaksi';
     protected static ?string $modelLabel = 'Sales Report';
     protected static ?string $pluralModelLabel = 'Sales Reports';
 

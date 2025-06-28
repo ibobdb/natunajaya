@@ -29,7 +29,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(false)
             ->registration(false)
-            ->sidebarWidth('w-72')
+            ->darkMode(false)
+            ->font('Poppins')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
                 'primary' => [
                     50 => '224, 231, 255',  // #e0e7ff

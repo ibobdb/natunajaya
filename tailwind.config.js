@@ -18,7 +18,7 @@ export default {
             },
             colors: {
                 primary: {
-                    DEFAULT: '#0000ff',
+                    DEFAULT: '#4f46e5', /* Updated the default color to match our theme */
                     50: '#e0e7ff',
                     100: '#c7d2fe',
                     200: '#a5b4fc',

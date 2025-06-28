@@ -29,7 +29,8 @@ class InstructorPanelProvider extends PanelProvider
             ->login(false)
             ->registration(false)
             ->sidebarWidth('w-72')
-            ->brandName('Panel Instruktur')
+            ->font('Poppins')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
                 'primary' => [
                     50 => '224, 231, 255',  // #e0e7ff
