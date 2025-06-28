@@ -134,7 +134,7 @@ class NotificationController extends Controller
             "Berikut detail jadwal anda:\n" .
             "Tanggal      : {$date} {$time} WIB\n" .
             "Kursus       : {$courseName}\n" .
-            "Instruktur   : Rp {$instructor}\n" .
+            "Instruktur   : {$instructor}\n" .
             "Mobil        : " . ($data['cars'] ?? 'Mobil yang ditentukan') . "\n" .
             "Mohon hadir tepat waktu. Jika ada kendala, silakan hubungi admin kami.";
     }
@@ -158,8 +158,8 @@ class NotificationController extends Controller
             "Berikut detail jadwal anda:\n" .
             "Tanggal      : {$date} {$time} WIB\n" .
             "Kursus       : {$courseName}\n" .
-            "Instruktur   : Rp {$instructor}\n" .
-            "Mobil        : Rp {$session}\n" .
+            "Instruktur   : {$instructor}\n" .
+            "Mobil        : {$session}\n" .
             "Mohon hadir tepat waktu. Jika ada kendala, silakan hubungi admin kami.";
     }
 
@@ -180,8 +180,8 @@ class NotificationController extends Controller
 
         return "Halo {$studentName}, terima kasih telah mempercayakan pendidikan mengemudi di sekolah kami.\n\n" .
             "Berikut detail terkait kelulusan Anda:\n" .
-            "Kursus: {$courseName}\n" .
-            "Tanggal: {$completionDate}\n" .
+            "Kursus     : {$courseName}\n" .
+            "Tanggal    : {$completionDate}\n" .
             "Sertifikat Anda dapat diambil di Kantor Natuna Jaya Driving School.";
     }
 
